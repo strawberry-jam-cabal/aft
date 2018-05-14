@@ -1,3 +1,3 @@
 from totest import *
 
-addOne(8.0)
+addOne([0, 1, 2])
