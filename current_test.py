@@ -1,3 +1,3 @@
 from totest import *
 
-addOne([0, 1, 2])
+addOne("trust your silent captain")
