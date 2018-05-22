@@ -1,7 +1,6 @@
+# Rabbit Type, for Python
+
+Rabbit Typing, as opposed to [Duck Typing](https://www.python.org/) and [Monkey Typing](https://github.com/Instagram/MonkeyType), is a brute force dynamic type inference approach which attempts to infer arguement types for a library function.
+
 ![A rabbit](/rabbit.jpg)
 
-![without a slash rabbit](rabbit.jpg)
-
-![My host](http://anniecherkaev.com/images/rabbit.jpg)
-
-![Absolute path](https://github.com/anniecherk/python_type_fuzzing/blob/master/rabbit.jpg)
