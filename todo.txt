@@ -1,0 +1,24 @@
+TODO, priority list
+
+- architect how the instances get generated, possibly w/ generator funcs instead of hard-coded
+- get recursive data-types in there
+- classes
+- run on the `learn` function
+- learn about containers & set up sandboxing
+- set up a nice interfact to interact w. the tool & maybe some automation
+
+
+
+- find motivating example codebases
+- write instance functions to cover more types
+- pull out of jupypter into script
+   ie, workflow is: pass in module, or file (as long as all deps are present) or name of function
+- test cases
+
+
+
+December 19th, plan of action:
+1. find (simple) codebase
+2. use that to rearchitect the code
+3. write tests
+4. work on extentions
