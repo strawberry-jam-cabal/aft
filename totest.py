@@ -1,7 +1,7 @@
-def addOne(a):
-    if a == "bees":
-        raise ValueError('I do not like bees')
-    return a + "!"
+def addOne(a):  
+    return a+1
+    #raise ValueError('I do not like bees')
+    #return a + "!"
 
 
 class Model(object):

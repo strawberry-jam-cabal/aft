@@ -1,3 +1,6 @@
+from itertools import product
+
+
 # helper for intelligently accumulating results
 def add_result(typeAccum, typeAnnotation, instance):
     if not(typeAnnotation in (map(lambda x: x[0], typeAccum))):
