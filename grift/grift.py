@@ -6,11 +6,12 @@ python modules, files, and single functions.
 
 import os
 import sys
-import subprocess
 import json
 from collections import defaultdict
+from inspect import signature
 
 from instances import *
+from itertools import product, repeat
 
 import click
 
@@ -62,8 +63,8 @@ def print_thick_bar(width):
 
 def default_print(json_obj):
     for func in json_obj:
-        indent = 10
-        width = 40
+        indent = 30
+        width = 70
         print_thick_bar(width)
 
         print(" "*(indent-2) + "TESTED\n" + str(func["function_to_type"]))
@@ -98,7 +99,7 @@ def show_results(typeAccum):
 @click.argument("file-path")
 @click.argument("function-name")
 def fuzz(file_path: str, function_name: str):
-    result_json = []
+    result_json = list()
     result_json.append(run_fuzzer(file_path, function_name))
     default_print(result_json)
 
@@ -108,32 +109,36 @@ def run_fuzzer(file_path: str, function_name: str):
     file_name = path[-1][:-3]
     path_str = os.path.join(*path[:-1])
 
+    # Import the method we are interested in
+    sys.path.append(path_str)
+    func = getattr(__import__(file_name), function_name)
+
+    # Examine the imported function for annotations and parameters
+    num_params = len(signature(func).parameters)
+    annotations = func.__annotations__
+
     instances = get_instances()
-    result_dict = {"function_to_type": function_name, "results": {"successes": defaultdict(list), "failures": defaultdict(list)}}
+    all_inputs = list(product(*repeat(instances, num_params)))
 
-    for (type_annotation, inst) in instances:
-        # Write a file to be tested
-        import_str = f"""import sys\nsys.path.append("{path_str}")\nfrom {file_name} import *\n"""
-        call_str = f"{function_name}({str(inst)})"
-        run_str = import_str + call_str
 
-        # Write file to fuzz
-        with open("current_test.py", "w") as f:
-            f.write(run_str)
+    result_dict = {"function_to_type": function_name,
+                   "results": {"successes": defaultdict(list),
+                               "failures": defaultdict(list)
+                               }
+                   }
+
+    for input_args in all_inputs:
+        types_only = [x[0] for x in input_args]
+        args_only = [x[1] for x in input_args]
 
         try:
-            with open("/dev/null", "w") as err:
-                subprocess.run("python3 current_test.py",
-                               shell=True,
-                               check=True,
-                               stderr=err)
+            func(*args_only)
+            result_dict['results']['successes'][str(types_only)[1:-1]].append(args_only)
 
-            result_dict['results']['successes'][type_annotation].append(inst)
+        except:
+            result_dict['results']['failures'][str(types_only)[1:-1]].append(args_only)
 
-        except subprocess.CalledProcessError as grepexc:
-            result_dict['results']['failures'][type_annotation].append(inst)
-
-    return result_dict #todo make work over
+    return result_dict # todo make work over
 
 
 if __name__ == "__main__":
