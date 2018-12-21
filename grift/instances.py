@@ -49,8 +49,13 @@ def get_string_list():
     return make_identical_lists("trust your silent captain", "string")
 
 
+def get_numpy_arrays():
+    arrs = [np.array([1]), np.array([1, 2, 3]), np.array([[1, 2], [3, 4]])]
+    return list(map(lambda x: ("np.array", x), arrs))
+
 # tuples, nested lists, mutiple arguments
+
 
 def get_instances():
     return get_ints() + get_floats() + get_bools() \
-           + get_strings() + get_int_list() + get_float_list() + get_string_list()
+           + get_strings() + get_int_list() + get_float_list() + get_string_list() + get_numpy_arrays()
