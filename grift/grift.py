@@ -3,7 +3,7 @@ GrIFT is fuzzy typing is a python type fuzzer which can be used to type check
 python modules, files, and single functions.
 """
 
-
+from typing import Any, Optional
 import os
 import sys
 import json
@@ -63,8 +63,8 @@ def print_thick_bar(width):
 
 def default_print(json_obj):
     for func in json_obj:
-        indent = 30
-        width = 70
+        indent = 40
+        width = 80
         print_thick_bar(width)
 
         print(" "*(indent-2) + "TESTED\n" + str(func["function_to_type"]))
@@ -92,7 +92,7 @@ def default_print(json_obj):
 
 def show_results(typeAccum):
     for (typeAnnotation, inst) in typeAccum:
-        print(typeAnnotation+ "│", inst)
+        print(typeAnnotation + "│", inst)
 
 
 @main.command("fuzz")
@@ -104,22 +104,36 @@ def fuzz(file_path: str, function_name: str):
     default_print(result_json)
 
 
-def run_fuzzer(file_path: str, function_name: str):
-    path = os.path.split(file_path)
-    file_name = path[-1][:-3]
-    path_str = os.path.join(*path[:-1])
+def flat_func_app(func, args):
+    """Apply function """
+    return func(*args)
 
+
+def class_func_app(constr_instance, func, func_args):
+    # call the function with the instance
+    return func(*([constr_instance] + func_args))
+
+
+def get_function(file_name, function_name):
+    funcs = function_name.split(".")
+    if len(funcs) == 1:
+        return getattr(__import__(file_name), funcs[0])
+    else:
+        return getattr(getattr(__import__(file_name), funcs[0]), funcs[1])
+
+
+def fuzz_example(file_name: str, function_name: str, class_instance: Optional[Any]=None):
     # Import the method we are interested in
-    sys.path.append(path_str)
-    func = getattr(__import__(file_name), function_name)
+    func = get_function(file_name, function_name)
 
     # Examine the imported function for annotations and parameters
     num_params = len(signature(func).parameters)
-    annotations = func.__annotations__
+    # annotations = func.__annotations__
 
     instances = get_instances()
-    all_inputs = list(product(*repeat(instances, num_params)))
 
+    # instances = get_dummy()
+    all_inputs = list(product(*repeat(instances, num_params)))
 
     result_dict = {"function_to_type": function_name,
                    "results": {"successes": defaultdict(list),
@@ -132,13 +146,53 @@ def run_fuzzer(file_path: str, function_name: str):
         args_only = [x[1] for x in input_args]
 
         try:
-            func(*args_only)
-            result_dict['results']['successes'][str(types_only)[1:-1]].append(args_only)
+            if class_instance is None:
+                flat_func_app(func, args_only)
+                result_dict['results']['successes'][str(types_only)[1:-1]].append(args_only)
+            else:
+                class_func_app(class_instance, func, args_only)
+                result_dict['results']['successes'][str(types_only)[1:-1]].append(args_only)
 
         except:
             result_dict['results']['failures'][str(types_only)[1:-1]].append(args_only)
 
-    return result_dict # todo make work over
+    return result_dict
+
+
+def run_fuzzer(file_path: str, function_name: str):
+    path = os.path.split(file_path)
+    file_name = path[-1][:-3]
+    path_str = os.path.join(*path[:-1])
+    sys.path.append(path_str)
+
+    # Check function name to see if it is nested in a class
+    funcs = function_name.split(".")
+
+    # NOTE: The maximum class depth is 2.
+    if len(funcs) == 2:
+        # Step 1, fuzz the constructor
+        # Get the name of the class
+        constructor_name = funcs[0]
+
+        # Fuzz the class constructor so we can instantiate it
+        valid_constructor_calls_json = fuzz_example(file_name, constructor_name)
+
+        # Get valid constructor types and args
+        good_constr_args = list(valid_constructor_calls_json["results"]["successes"].values())
+
+        # TODO: run over all (?) successful class instances
+
+        # Instantiate the class
+        class_constr = get_function(file_name, constructor_name)
+        class_instance = class_constr(*(good_constr_args[0][0]))
+
+        # Fuzz the function using single instance of the class
+        return fuzz_example(file_name, function_name, class_instance)
+
+    elif len(funcs) == 1:
+        return fuzz_example(file_name, function_name)
+    else:
+        raise ValueError(f"{function_name} must either be the name of a function or a [single nested] class method")
 
 
 if __name__ == "__main__":
