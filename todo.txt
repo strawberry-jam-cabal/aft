@@ -22,3 +22,17 @@ December 19th, plan of action:
 2. use that to rearchitect the code
 3. write tests
 4. work on extentions
+
+
+
+January 3 2019
+1. Implemented classes (no nested classes allowed!)
+2. Did some code cleanup
+
+Future todo:
+1. Tests
+2. Get types from type definitions and use these to limit search space
+3. Get default parameters from named parameters in functions and use these
+4. Result printing for classes
+5. Multiple successful class instances
+6. Once we have a set of benchmarks, make sure performance is acceptable / improve search strategies
