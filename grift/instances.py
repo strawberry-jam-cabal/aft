@@ -7,6 +7,11 @@ import numpy as np
 
 # todo iterative generation
 
+
+def get_dummy():
+    return [("dummy one", 1)]
+
+
 def get_ints():
     # todo control how many you want to try
     ints = [1, 0, -1]
