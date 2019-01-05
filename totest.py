@@ -1,7 +1,65 @@
-def addOne(a):  
+import numpy as np
+def addOne(a):
     return a+1
     #raise ValueError('I do not like bees')
     #return a + "!"
+
+
+def XNormalizeSTDMeanCentered(X):
+    r_range, c_range = X.shape
+
+    meanC = np.zeros(c_range)
+    STDC = np.zeros(c_range)
+    for idx in range(c_range):
+        meanC[idx] = np.mean(X[:, idx])
+        STDC[idx] = np.sqrt(np.var(X[:, idx]))
+    print(meanC)
+    print(STDC)
+
+    Xnorm = np.zeros((r_range, c_range))
+    for	idx in range(c_range):
+        for jdx in range(r_range):
+            Xnorm[jdx, idx] = (X[jdx, idx] - meanC[idx]) / STDC[idx]
+
+    return Xnorm
+
+
+def add_stuff(a,b,c):
+    return a+b+c
+
+"""
+addOne 
+
+--> 
+addOne( 1, "dog" )
+
+
+learn
+
+1. first arg is self --> autodeduce?
+
+-->
+2. grab classes in scope 
+3. grab their constructors 
+
+
+dummy = Class.constructor( rightNumArgs ...) 
+
+-->
+
+dummy = MyClass(*good_args)
+dummy.learn( fuzz, this )
+"""
+
+class Example(object):
+
+    def __init__(self, a: int, b: float, c: str):
+        self.a = a
+        self.b = b
+        self.c = c
+
+    def add_some_stuff(self, x: int, y: int) -> str:
+        return f"{self.c} {x + y + self.a + self.b}"
 
 
 class Model(object):
@@ -175,6 +233,7 @@ class Model(object):
             result.insert(0, max_state)
 
         return result
+
 
     def learn(self, sequence, smoothing=0):
         """
