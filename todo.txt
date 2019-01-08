@@ -1,4 +1,4 @@
-Todo:
+Implementation todo:
 - Get types from type definitions and use these to limit search space
 - Get default parameters from named parameters in functions and use these
 - Result printing for classes
@@ -14,3 +14,11 @@ Also handle:
 - Runaway memory useage
 - Var arg & keyword arg signatures
 - Recursive data structures: run on `learn` function
+
+
+Data todo:
+- grab "top" 10? 3? python repos (maybe ranked by pypi downloads?)
+- compute of all python functions in those repos, how many have full mypy annotations?
+    (ideally some would and some wouldn't)
+- reduced down to the ones that do, what percentage can we recover the annotation?
+- of the ones that don't, what percentage can we type?
