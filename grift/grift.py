@@ -67,7 +67,7 @@ def print_thick_bar(width):
     print("━" * width)
 
 
-def default_print(json_obj):
+def default_print(json_obj, print_failures: bool=False):
     for func in json_obj:
         indent = 40
         width = 80
@@ -85,15 +85,17 @@ def default_print(json_obj):
         for types, insts in results["successes"].items():
             print(types.rjust(indent-1) + " │ ", insts[0])
 
-        print("\n\n" + " "*(indent-3) + "FAILURES")
+        if print_failures:
 
-        print("─"*indent + "┬" + "─"*(width-indent-1))
-        print(" "*((indent//2)-2) + "type" + " "*((indent//2)-2) + "│" + "   " + "instance")
-        print("─"*indent + "┼" + "─" * (width - indent - 1))
+            print("\n\n" + " "*(indent-3) + "FAILURES")
 
-        for types, insts in results["failures"].items():
-            print(types.rjust(indent-1) + " │ ", insts[0])
-        print_thick_bar(width)
+            print("─"*indent + "┬" + "─"*(width-indent-1))
+            print(" "*((indent//2)-2) + "type" + " "*((indent//2)-2) + "│" + "   " + "instance")
+            print("─"*indent + "┼" + "─" * (width - indent - 1))
+
+            for types, insts in results["failures"].items():
+                print(types.rjust(indent-1) + " │ ", insts[0])
+            print_thick_bar(width)
 
 
 def show_results(typeAccum):
@@ -104,10 +106,11 @@ def show_results(typeAccum):
 @main.command("fuzz")
 @click.argument("file-path")
 @click.argument("function-name")
-def fuzz(file_path: str, function_name: str):
+@click.option("--print-failures/--no-print-failures", default=False)
+def fuzz(file_path: str, function_name: str, print_failures: bool):
     result_json = list()
     result_json.append(run_fuzzer(file_path, function_name))
-    default_print(result_json)
+    default_print(result_json, print_failures=print_failures)
 
 
 def flat_func_app(func: Callable[..., B], args: List[A]) -> B:
