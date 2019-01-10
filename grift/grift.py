@@ -183,6 +183,12 @@ def fuzz_example(file_name: str,
 
     # Examine the imported function for annotations and parameters
     num_params = len(signature(func).parameters)
+
+    # If we are using a class instance then the number of parameters needs to
+    # be decremented by 1 to account for the self argument
+    if class_instance:
+        num_params -= 1
+
     # annotations = func.__annotations__
 
     instances = get_instances()

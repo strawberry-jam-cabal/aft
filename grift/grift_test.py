@@ -4,7 +4,7 @@ from typing import Any, Dict, List, Optional, Set
 
 from ddt import data, ddt, unpack
 
-from grift import get_function, fuzz_example
+from grift import get_function, fuzz_example, class_func_app
 from test_functions import Example
 
 
@@ -29,6 +29,26 @@ class TestGrift(unittest.TestCase):
         self.assertTrue(result == expected, test_description)
 
     @data(
+          ("Example.add_some_stuff", Example(1, 2.0, "sum is:"), [1, 2],
+           "sum is: 6.0", "Test applying arguments to a nested function"),
+          ("Example.add_one_only_int_no_deps", Example(1, 2.0, "3"), [1],
+           2, "Test applying arguments to a nested function no dependencies")
+          )
+    @unpack
+    def test_class_func_app(self,
+                            function_name: str,
+                            class_instance: Any,
+                            args: List[Any],
+                            expected: Any,
+                            test_description: str
+                            ) -> None:
+        file_name = "test_functions"
+        func = get_function(file_name, function_name)
+        result = class_func_app(class_instance, func, args)
+        print(result)
+        self.assertTrue(result == expected, test_description)
+
+    @data(
           ("add_one_only_int", None, ["'int'"],
            "Test simple single input function with single type"),
           ("add_two_only_int", None, ["'int', 'int'"],
@@ -39,8 +59,8 @@ class TestGrift(unittest.TestCase):
                                         "'float', 'int'", "'float', 'float'",
                                         "'string', 'string'"],
            "Test multi input function with multi types"),
-          # ("Example.add_one_only_int_no_deps", Example(1, 2, 3), ["'int'"],
-          #  "Test method in class with no dependencies and single type"),
+          ("Example.add_one_only_int_no_deps", Example(1, 2.0, "3"), ["'int'"],
+           "Test method in class with no dependencies and single type"),
           )
     @unpack
     def test_fuzz_example_success(self,
@@ -53,7 +73,7 @@ class TestGrift(unittest.TestCase):
                               function_name,
                               class_instance=class_instance)
         success_type_list = list(output["results"]["successes"].keys())
-        print(output['results']["successes"])
+        # print(output['results']["successes"])
         self.assertListEqual(success_type_list, expected, test_description)
 
 
