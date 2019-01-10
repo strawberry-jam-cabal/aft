@@ -39,7 +39,8 @@ class TestGrift(unittest.TestCase):
                                         "'float', 'int'", "'float', 'float'",
                                         "'string', 'string'"],
            "Test multi input function with multi types"),
-          # ("add_one", [1], 2, "Test method in class"),
+          # ("Example.add_one_only_int_no_deps", Example(1, 2, 3), ["'int'"],
+          #  "Test method in class with no dependencies and single type"),
           )
     @unpack
     def test_fuzz_example_success(self,
@@ -52,6 +53,7 @@ class TestGrift(unittest.TestCase):
                               function_name,
                               class_instance=class_instance)
         success_type_list = list(output["results"]["successes"].keys())
+        print(output['results']["successes"])
         self.assertListEqual(success_type_list, expected, test_description)
 
 

@@ -40,3 +40,10 @@ class Example(object):
 
     def add_some_stuff(self, x: int, y: int) -> str:
         return f"{self.c} {x + y + self.a + self.b}"
+
+    def add_one_only_int_no_deps(self, a):
+        if type(a) != int:
+            raise TypeError()
+        else:
+            return a + 1
+
