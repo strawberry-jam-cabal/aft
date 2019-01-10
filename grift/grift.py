@@ -211,7 +211,7 @@ def fuzz_example(file_name: str,
     return result_dict
 
 
-def run_fuzzer(file_path: str, function_name: str) -> None:
+def run_fuzzer(file_path: str, function_name: str) -> Dict[Any, Any]:
     path = os.path.split(file_path)
     file_name = path[-1][:-3]
     path_str = os.path.join(*path[:-1])
