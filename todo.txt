@@ -17,8 +17,18 @@ Also handle:
 
 
 Data todo:
+- look at techniques in "Measuring Polymorphism in Python Programs" (they analyze 36 python libs)
 - grab "top" 10? 3? python repos (maybe ranked by pypi downloads?)
 - compute of all python functions in those repos, how many have full mypy annotations?
     (ideally some would and some wouldn't)
 - reduced down to the ones that do, what percentage can we recover the annotation?
 - of the ones that don't, what percentage can we type?
+
+
+
+Fancy todo:
+- exception based guidance
+- transform dynamic checks into guesses about refinement types
+- ML to guess types based on text, large python corpeses
+- "magic bytes comparison"  --> grab all hardcoded values in the ast
+- branching coverage maybe?
