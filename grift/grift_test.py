@@ -61,6 +61,13 @@ class TestGrift(unittest.TestCase):
            "Test multi input function with multi types"),
           ("Example.add_one_only_int_no_deps", Example(1, 2.0, "3"), ["'int'"],
            "Test method in class with no dependencies and single type"),
+          ("Example.add_two_multi_type", Example(1, 2.0, 3),
+           ["'int', 'int'", "'int', 'float'",
+            "'float', 'int'", "'float', 'float'"],
+           "Test method in class with multi types and dependencies"),
+          ("Example.add_two_multi_type", Example(1, 2.0, "3"),
+           [],
+           "Test method in class with dependencies no feasable types"),
           )
     @unpack
     def test_fuzz_example_success(self,
@@ -73,7 +80,6 @@ class TestGrift(unittest.TestCase):
                               function_name,
                               class_instance=class_instance)
         success_type_list = list(output["results"]["successes"].keys())
-        # print(output['results']["successes"])
         self.assertListEqual(success_type_list, expected, test_description)
 
 

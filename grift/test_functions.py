@@ -47,3 +47,10 @@ class Example(object):
         else:
             return a + 1
 
+    def add_two_multi_type(self, a, b):
+        types = [int, str, float]
+        if type(a) not in types or type(b) not in types:
+            raise TypeError()
+        else:
+            return self.c + a + b + self.a + self.b
+
