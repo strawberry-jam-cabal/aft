@@ -29,12 +29,16 @@ class TestGrift(unittest.TestCase):
         self.assertTrue(result == expected, test_description)
 
     @data(
-          # ("add_one_only_int", None, ["'int'"],
-          #  "Test simple single input function with single type"),
+          ("add_one_only_int", None, ["'int'"],
+           "Test simple single input function with single type"),
           ("add_two_only_int", None, ["'int', 'int'"],
            "Test multi input function with single types"),
-          # ("add_one", [1], 2, "Test single input function with multi types"),
-          # ("add_one", [1], 2, "Test multi input function with multi types"),
+          ("add_one_multi_type", None, ["'int'", "'float'"],
+           "Test single input function with multi types"),
+          ("add_two_multi_type", None, ["'int', 'int'", "'int', 'float'",
+                                        "'float', 'int'", "'float', 'float'",
+                                        "'string', 'string'"],
+           "Test multi input function with multi types"),
           # ("add_one", [1], 2, "Test method in class"),
           )
     @unpack

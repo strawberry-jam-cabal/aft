@@ -16,6 +16,21 @@ def add_two_only_int(a, b):
         return a + b
 
 
+def add_one_multi_type(a):
+    if type(a) not in [int, str, float]:
+        raise TypeError()
+    else:
+        return a + 1
+
+
+def add_two_multi_type(a, b):
+    types = [int, str, float]
+    if type(a) not in types or type(b) not in types:
+        raise TypeError()
+    else:
+        return a + b
+
+
 class Example(object):
 
     def __init__(self, a: int, b: float, c: str):
