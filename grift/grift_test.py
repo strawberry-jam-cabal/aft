@@ -1,26 +1,32 @@
+import os
 import unittest
 from typing import Any, List, Optional, Set
 
 from ddt import data, ddt, unpack
 
-from grift.grift import get_function
+from grift import get_function
+from test_functions import Example
 
 
 @ddt
-class TextToolsTest(unittest.TestCase):
+class TestGrift(unittest.TestCase):
 
-    @data(("Example.add_some_stuff", "Test getting a single function"),
-          ("add_one", "Test getting a method from a class")
+    @data(("add_one", [1], 2, "Test getting a single function"),
+          ("Example.add_some_stuff", [Example(1, 2, "sum is:"), 1, 2],
+           "sum is: 6", "Test getting a method from a class")
           )
     @unpack
     def test_get_function(self,
                           function_name: str,
+                          args: List[Any],
+                          expected: Any,
                           test_description: str
                           ) -> None:
         """Tests that the correct functions are obtained programatically"""
-        file_name = "test_functions.py"
+        file_name = "test_functions"
         func = get_function(file_name, function_name)
-
+        result = func(*args)
+        self.assertTrue(result == expected, test_description)
 
 
 if __name__ == "__main__":
