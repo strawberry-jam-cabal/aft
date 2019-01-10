@@ -3,7 +3,7 @@ GrIFT is fuzzy typing is a python type fuzzer which can be used to type check
 python modules, files, and single functions.
 """
 
-from typing import Any, Optional
+from typing import Any, Callable, Optional
 import os
 import sys
 import json
@@ -114,7 +114,7 @@ def class_func_app(constr_instance, func, func_args):
     return func(*([constr_instance] + func_args))
 
 
-def get_function(file_name, function_name):
+def get_function(file_name: str, function_name: str) -> Callable[Any, Any]:
     funcs = function_name.split(".")
     if len(funcs) == 1:
         return getattr(__import__(file_name), funcs[0])
