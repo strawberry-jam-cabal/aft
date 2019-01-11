@@ -8,7 +8,7 @@ import os
 import sys
 import json
 from collections import defaultdict
-from inspect import signature
+from inspect import signature, Parameter
 
 from instances import *
 from itertools import product, repeat
@@ -182,7 +182,19 @@ def fuzz_example(file_name: str,
     func = get_function(file_name, function_name)
 
     # Examine the imported function for annotations and parameters
-    num_params = len(signature(func).parameters)
+    func_params = signature(func).parameters
+
+    # Get the names of the parameters
+    param_names = list(func_params.keys())
+
+    # Get the total number of parameters
+    total_num_params = len(signature(func).parameters)
+
+    # Get the names of the parameters with default arguments
+    default_param_names = [k for k, v in func_params.items()
+                           if v.default is not Parameter.empty]
+
+    num_params = total_num_params - len(default_param_names)
 
     # If we are using a class instance then the number of parameters needs to
     # be decremented by 1 to account for the self argument

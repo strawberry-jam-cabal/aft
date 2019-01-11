@@ -45,7 +45,6 @@ class TestGrift(unittest.TestCase):
         file_name = "test_functions"
         func = get_function(file_name, function_name)
         result = class_func_app(class_instance, func, args)
-        print(result)
         self.assertTrue(result == expected, test_description)
 
     @data(
@@ -68,6 +67,8 @@ class TestGrift(unittest.TestCase):
           ("Example.add_two_multi_type", Example(1, 2.0, "3"),
            [],
            "Test method in class with dependencies no feasable types"),
+          ("add_one_only_int_default", None, ["'int'"],
+           "test default parameters")
           )
     @unpack
     def test_fuzz_example_success(self,
