@@ -31,6 +31,14 @@ def add_two_multi_type(a, b):
         return a + b
 
 
+def add_one_only_int_default(a, b=3, c=4):
+    if type(a) != int:
+        raise TypeError()
+    else:
+        return a + b + c + 1
+
+
+
 class Example(object):
 
     def __init__(self, a: int, b: float, c: str):

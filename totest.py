@@ -1,5 +1,5 @@
 import numpy as np
-def addOne(a):
+def add_one(a):
     return a+1
     #raise ValueError('I do not like bees')
     #return a + "!"
@@ -60,6 +60,39 @@ class Example(object):
 
     def add_some_stuff(self, x: int, y: int) -> str:
         return f"{self.c} {x + y + self.a + self.b}"
+
+
+def _normalize_prob(prob, item_set):
+    result = {}
+    if prob is None:
+        number = len(item_set)
+        for item in item_set:
+            result[item] = 1.0 / number
+    else:
+        prob_sum = 0.0
+        for item in item_set:
+            prob_sum += prob.get(item, 0)
+
+        if prob_sum > 0:
+            for item in item_set:
+                result[item] = prob.get(item, 0) / prob_sum
+        else:
+            for item in item_set:
+                result[item] = 0
+
+    return result
+
+
+def _normalize_prob_two_dim(prob, item_set1, item_set2):
+    result = {}
+    if prob is None:
+        for item in item_set1:
+            result[item] = _normalize_prob(None, item_set2)
+    else:
+        for item in item_set1:
+            result[item] = _normalize_prob(prob.get(item), item_set2)
+
+    return result
 
 
 class Model(object):
@@ -137,7 +170,7 @@ class Model(object):
         for state in self._states:
             alpha[0][state] = self.start_prob(state) * self.emit_prob(state, sequence[0])
 
-        for index in xrange(1, sequence_length):
+        for index in range(1, sequence_length):
             alpha.append({})
             for state_to in self._states:
                 prob = 0
@@ -157,7 +190,7 @@ class Model(object):
         for state in self._states:
             beta[0][state] = 1
 
-        for index in xrange(sequence_length - 1, 0, -1):
+        for index in range(sequence_length - 1, 0, -1):
             beta.insert(0, {})
             for state_from in self._states:
                 prob = 0
@@ -201,7 +234,7 @@ class Model(object):
             delta[state] = self.start_prob(state) * self.emit_prob(state, sequence[0])
 
         pre = []
-        for index in xrange(1, sequence_length):
+        for index in range(1, sequence_length):
             delta_bar = {}
             pre_state = {}
             for state_to in self._states:
@@ -228,12 +261,11 @@ class Model(object):
             return []
 
         result = [max_state]
-        for index in xrange(sequence_length - 1, 0, -1):
+        for index in range(sequence_length - 1, 0, -1):
             max_state = pre[index - 1][max_state]
             result.insert(0, max_state)
 
         return result
-
 
     def learn(self, sequence, smoothing=0):
         """
@@ -249,7 +281,7 @@ class Model(object):
         beta = self._backward(sequence)
 
         gamma = []
-        for index in xrange(length):
+        for index in range(length):
             prob_sum = 0
             gamma.append({})
             for state in self._states:
@@ -264,7 +296,7 @@ class Model(object):
                 gamma[index][state] /= prob_sum
 
         xi = []
-        for index in xrange(length - 1):
+        for index in range(length - 1):
             prob_sum = 0
             xi.append({})
             for state_from in self._states:
@@ -292,14 +324,14 @@ class Model(object):
 
             # update transition probability
             gamma_sum = 0
-            for index in xrange(length - 1):
+            for index in range(length - 1):
                 gamma_sum += gamma[index][state]
 
             if gamma_sum > 0:
                 denominator = gamma_sum + states_number * smoothing
                 for state_to in self._states:
                     xi_sum = 0
-                    for index in xrange(length - 1):
+                    for index in range(length - 1):
                         xi_sum += xi[index][state][state_to]
                     self._trans_prob[state][state_to] = (smoothing + xi_sum) / denominator
             else:
@@ -312,7 +344,7 @@ class Model(object):
             for symbol in self._symbols:
                 emit_gamma_sum[symbol] = 0
 
-            for index in xrange(length):
+            for index in range(length):
                 emit_gamma_sum[sequence[index]] += gamma[index][state]
 
             if gamma_sum > 0:
