@@ -226,7 +226,7 @@ def fuzz_example(file_name: str,
                 class_func_app(class_instance, func, args_only)
                 result_dict['results']['successes'][str(types_only)[1:-1]].append(args_only)
 
-        except:
+        except Exception as e:
             result_dict['results']['failures'][str(types_only)[1:-1]].append(args_only)
 
     return result_dict
