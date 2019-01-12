@@ -1,6 +1,5 @@
 Implementation todo:
 - Get types from type definitions and use these to limit search space
-- Get default parameters from named parameters in functions and use these
 - Result printing for classes
 - Multiple successful class instances
 - Once we have a set of benchmarkss, make sure performance is acceptable / improve search strategies
