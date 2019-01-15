@@ -1,3 +1,5 @@
+## BETA SOFTWARE. DO NOT USE WHEN FAILURE WILL HAVE CONSEQUENCES.
+
 # Rabbit Typing, for Python
 
 Rabbit Typing, as opposed to [Duck Typing](https://www.python.org/) and
