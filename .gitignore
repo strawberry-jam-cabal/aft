@@ -3,3 +3,7 @@
 __pycache__/*
 .idea/
 
+# Build artifacts
+build/
+dist/
+aft.egg-info/
