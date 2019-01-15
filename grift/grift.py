@@ -6,11 +6,10 @@ python modules, files, and single functions.
 from typing import Any, Callable, Dict, List, Optional, TypeVar
 import os
 import sys
-import json
 from collections import defaultdict
 from inspect import signature, Parameter
 
-from instances import *
+from grift.instances import *
 from itertools import product, repeat
 
 import click
@@ -28,7 +27,7 @@ else:
 # Define generic type variables
 A = TypeVar("A")
 B = TypeVar("B")
-CLS = TypeVar("Class")
+CLS = TypeVar("CLS")
 
 
 @click.group()
@@ -265,7 +264,8 @@ def run_fuzzer(file_path: str, function_name: str) -> Dict[Any, Any]:
     elif len(funcs) == 1:
         return fuzz_example(file_name, function_name)
     else:
-        raise ValueError(f"{function_name} must either be the name of a function or a [single nested] class method")
+        raise ValueError("{} must either be the name of a function or a [single nested] class "
+                         "method".format(function_name))
 
 
 if __name__ == "__main__":

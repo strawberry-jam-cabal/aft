@@ -1,8 +1,10 @@
 import numpy as np
+
+
 def add_one(a):
     return a+1
-    #raise ValueError('I do not like bees')
-    #return a + "!"
+    # raise ValueError('I do not like bees')
+    # return a + "!"
 
 
 def XNormalizeSTDMeanCentered(X):
@@ -17,15 +19,16 @@ def XNormalizeSTDMeanCentered(X):
     print(STDC)
 
     Xnorm = np.zeros((r_range, c_range))
-    for	idx in range(c_range):
+    for idx in range(c_range):
         for jdx in range(r_range):
             Xnorm[jdx, idx] = (X[jdx, idx] - meanC[idx]) / STDC[idx]
 
     return Xnorm
 
 
-def add_stuff(a,b,c):
-    return a+b+c
+def add_stuff(a, b, c):
+    return a + b + c
+
 
 """
 addOne 
@@ -51,6 +54,7 @@ dummy = MyClass(*good_args)
 dummy.learn( fuzz, this )
 """
 
+
 class Example(object):
 
     def __init__(self, a: int, b: float, c: str):
@@ -59,7 +63,7 @@ class Example(object):
         self.c = c
 
     def add_some_stuff(self, x: int, y: int) -> str:
-        return f"{self.c} {x + y + self.a + self.b}"
+        return "{} {}".format(self.c, x + y + self.a + self.b)
 
 
 def _normalize_prob(prob, item_set):
