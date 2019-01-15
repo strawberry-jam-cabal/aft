@@ -5,5 +5,5 @@ Rabbit Typing, as opposed to [Duck Typing](https://www.python.org/) and
 dynamic type inference approach which attempts to infer argument types for a
 library function.
 
-![A rabbit](/rabbit.jpg)
+![A rabbit](https://github.com/strawberry-jam-cabal/aft/raw/master/rabbit.jpg)
 
