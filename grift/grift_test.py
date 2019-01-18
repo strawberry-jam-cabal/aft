@@ -4,7 +4,8 @@ from typing import Any, Dict, List, Optional, Set
 
 from ddt import data, ddt, unpack
 
-from grift import get_function, fuzz_example, class_func_app
+from grift import (get_function, fuzz_example, class_func_app,
+                   generate_mypy_stub_strings)
 from test_functions import Example
 
 
@@ -82,6 +83,34 @@ class TestGrift(unittest.TestCase):
                               class_instance=class_instance)
         success_type_list = list(output["results"]["successes"].keys())
         self.assertListEqual(success_type_list, expected, test_description)
+
+    @data(("add_one", ["x"], ["int"], ["def add_one(x: int) -> Any"],
+           "Test simple single argument case"),
+          ("add_two", ["x", "y"], ["int, str"],
+           ["def add_two(x: int, y: str) -> Any"],
+           "Test simple multi argument case"),
+          ("add_two", ["x", "y"], ["int, str", "str, int"],
+           ["def add_two(x: int, y: str) -> Any",
+            "def add_two(x: str, y: int) -> Any",],
+           "Test multi argument case multi string")
+          )
+    @unpack
+    def test_generate_mypy_stub_string(self,
+                                       function_name: str,
+                                       arg_names: List[str],
+                                       arg_types: List[str],
+                                       expected: str,
+                                       test_description: str
+                                       ):
+        function_json = {"function_to_type": function_name,
+                         "arg_names": arg_names,
+                         "results": {"successes": {k: [1] for k in arg_types}}
+                         }
+
+        function_string = generate_mypy_stub_strings(function_json)
+
+        self.assertListEqual(function_string, expected, test_description)
+
 
 
 if __name__ == "__main__":
