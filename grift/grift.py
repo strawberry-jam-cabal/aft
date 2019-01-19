@@ -41,6 +41,7 @@ JSON SPEC
     [
         {
         function_to_type : addOnes
+        arg_names : ["x", "y"]
         results :
             {
                 successes:
@@ -56,6 +57,50 @@ JSON SPEC
             }
     ]
     """
+
+
+def generate_mypy_stub_strings(function_example_dict: Dict[str, Any]) -> List[str]:
+    """
+
+    Args:
+        function_example_dict:
+
+    Returns:
+
+    """
+    stub_strings = []
+    zipped_types = [zip(function_example_dict["arg_names"], k.split(", ")) for
+                    k, _ in
+                    function_example_dict["results"]["successes"].items()]
+
+    # zipped_types = zip(function_example_dict["arg_names"],
+    #                    function_example_dict["results"]["successes"])
+    for args in zipped_types:
+        stub_string = ["def ", function_example_dict["function_to_type"], "("]
+        for arg_name, arg_type in args:
+            stub_string.append(arg_name)
+            stub_string.append(": ")
+            stub_string.append(arg_type)
+            stub_string.append(", ")
+
+        stub_strings.append("".join(stub_string[:-1] + [") -> Any"]))
+
+    return stub_strings
+
+
+def generate_mypy_stub_file(json_types: Dict[str, Any]) -> None:
+    to_write = []
+    for func in json_types:
+        to_write.append("def ")
+        to_write.append(function["function_to_type"])
+        to_write.append("(")
+        for arg_name, arg_type in zip(function["arg_names"], function["results"]["successes"]):
+            to_write.append(arg_name)
+            to_write.append(": ")
+            to_write.append(arg_type)
+            to_write.append(", ")
+        to_write[:-2].append(") -> Any")
+    print()
 
 
 def print_thin_bar(width):
@@ -106,10 +151,26 @@ def show_results(typeAccum):
 @click.argument("file-path")
 @click.argument("function-name")
 @click.option("--print-failures/--no-print-failures", default=False)
-def fuzz(file_path: str, function_name: str, print_failures: bool):
-    result_json = list()
-    result_json.append(run_fuzzer(file_path, function_name))
-    default_print(result_json, print_failures=print_failures)
+@click.option("--all/--no-all", default=False)
+def fuzz(file_path: str, function_name: str, print_failures: bool, all: bool):
+    """
+    TODO
+    Args:
+        file_path:
+        function_name:
+        print_failures:
+        all:
+
+    Returns:
+
+    """
+    if all:
+        pass  # TODO after stub file gen is in
+    else:  # TODO
+        result_json = list()
+        result_json.append(run_fuzzer(file_path, function_name))
+        print(result_json)
+        default_print(result_json, print_failures=print_failures)
 
 
 def flat_func_app(func: Callable[..., B], args: List[A]) -> B:
@@ -208,6 +269,7 @@ def fuzz_example(file_name: str,
     all_inputs = list(product(*repeat(instances, num_params)))
 
     result_dict = {"function_to_type": function_name,
+                   "arg_names": param_names,
                    "results": {"successes": defaultdict(list),
                                "failures": defaultdict(list)
                                }
