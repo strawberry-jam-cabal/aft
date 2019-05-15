@@ -1,11 +1,14 @@
+from __future__ import print_function
+
 import os
+import sys
+sys.path.append(os.getcwd())
 import unittest
 from typing import Any, Dict, List, Optional, Set
 
 from ddt import data, ddt, unpack
 
-from grift import (get_function, fuzz_example, class_func_app,
-                   generate_mypy_stub_strings)
+import grift
 from test_functions import Example
 
 
@@ -18,14 +21,14 @@ class TestGrift(unittest.TestCase):
           )
     @unpack
     def test_get_function(self,
-                          function_name: str,
-                          args: List[Any],
-                          expected: Any,
-                          test_description: str
-                          ) -> None:
+                          function_name,  # type: str
+                          args,  # type: List[Any]
+                          expected,  # type: Any
+                          test_description,   # type:  str
+                          ):
         """Tests that the correct functions are obtained programatically"""
         file_name = "test_functions"
-        func = get_function(file_name, function_name)
+        func = grift.get_function(file_name, function_name)
         result = func(*args)
         self.assertTrue(result == expected, test_description)
 
@@ -37,15 +40,15 @@ class TestGrift(unittest.TestCase):
           )
     @unpack
     def test_class_func_app(self,
-                            function_name: str,
-                            class_instance: Any,
-                            args: List[Any],
-                            expected: Any,
-                            test_description: str
-                            ) -> None:
+                            function_name,  # type:  str
+                            class_instance,  # type: Any
+                            args,  # type: List[Any]
+                            expected,  # type: Any
+                            test_description,  # type: str
+                            ):
         file_name = "test_functions"
-        func = get_function(file_name, function_name)
-        result = class_func_app(class_instance, func, args)
+        func = grift.get_function(file_name, function_name)
+        result = grift.class_func_app(class_instance, func, args)
         self.assertTrue(result == expected, test_description)
 
     @data(
@@ -73,16 +76,16 @@ class TestGrift(unittest.TestCase):
           )
     @unpack
     def test_fuzz_example_success(self,
-                                  function_name: str,
-                                  class_instance: Optional[Any],
-                                  expected: List[str],
-                                  test_description: str
-                                  ) -> None:
-        output = fuzz_example("test_functions",
+                                  function_name,  # type: str
+                                  class_instance,  # type: Optional[Any]
+                                  expected,  # type: List[str]
+                                  test_description,  # type: str
+                                  ):
+        output = grift.fuzz_example("test_functions",
                               function_name,
                               class_instance=class_instance)
         success_type_list = list(output["results"]["successes"].keys())
-        self.assertListEqual(success_type_list, expected, test_description)
+        self.assertListEqual(sorted(success_type_list), sorted(expected), test_description)
 
     @data(("add_one", ["x"], ["int"], ["def add_one(x: int) -> Any"],
            "Test simple single argument case"),
@@ -96,18 +99,18 @@ class TestGrift(unittest.TestCase):
           )
     @unpack
     def test_generate_mypy_stub_string(self,
-                                       function_name: str,
-                                       arg_names: List[str],
-                                       arg_types: List[str],
-                                       expected: str,
-                                       test_description: str
+                                       function_name,  # type: str
+                                       arg_names,  # type: List[str]
+                                       arg_types,  # type: List[str]
+                                       expected,  # type: str
+                                       test_description,  # type: str
                                        ):
         function_json = {"function_to_type": function_name,
                          "arg_names": arg_names,
                          "results": {"successes": {k: [1] for k in arg_types}}
                          }
 
-        function_string = generate_mypy_stub_strings(function_json)
+        function_string = grift.generate_mypy_stub_strings(function_json)
 
         self.assertListEqual(function_string, expected, test_description)
 

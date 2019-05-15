@@ -31,3 +31,7 @@ Fancy todo:
 - ML to guess types based on text, large python corpeses
 - "magic bytes comparison"  --> grab all hardcoded values in the ast
 - branching coverage maybe?
+
+
+Don't trust type annotations, maybe have a flag for trust vs not trust type annotation
+display what it was, but hten also test it

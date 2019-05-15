@@ -2,14 +2,20 @@
 GrIFT is fuzzy typing is a python type fuzzer which can be used to type check
 python modules, files, and single functions.
 """
+from __future__ import print_function
 
 from typing import Any, Callable, Dict, List, Optional, TypeVar
 import os
 import sys
 from collections import defaultdict
-from inspect import signature, Parameter
 
-from grift.instances import *
+if sys.version_info[0] < 3:
+    from inspect import getmembers, isclass, isfunction
+    from funcsigs import signature, Parameter
+else:
+    from inspect import signature, Parameter, getmembers, isclass, isfunction
+
+from instances import *
 from itertools import product, repeat
 
 import click
@@ -59,7 +65,22 @@ JSON SPEC
     """
 
 
-def generate_mypy_stub_strings(function_example_dict: Dict[str, Any]) -> List[str]:
+def get_all_functions_in_module(module_name, module_str):
+    # type: (Any, str) -> Any
+    """Gets all classes and sub methods from a module
+    """
+    potential_classes = [(name, obj) for name, obj in getmembers(module_name) if
+                         isclass(obj) and obj.__module__ == module_str]
+
+    # TODO:: INheritance fucks us
+    all_classes = [(name, obj, getmembers(obj, predicate=isfunction))
+                   for name, obj in potential_classes]
+
+    return all_classes
+
+
+def generate_mypy_stub_strings(function_example_dict):
+    # type: (Dict[str, Any]) -> List[str]
     """
 
     Args:
@@ -88,7 +109,8 @@ def generate_mypy_stub_strings(function_example_dict: Dict[str, Any]) -> List[st
     return stub_strings
 
 
-def generate_mypy_stub_file(json_types: Dict[str, Any]) -> None:
+def generate_mypy_stub_file(json_types):
+    # type: (Dict[str, Any]) -> None
     to_write = []
     for func in json_types:
         to_write.append("def ")
@@ -104,14 +126,15 @@ def generate_mypy_stub_file(json_types: Dict[str, Any]) -> None:
 
 
 def print_thin_bar(width):
-    print("─" * width)
+    print("-" * width)
 
 
 def print_thick_bar(width):
-    print("━" * width)
+    print("-" * width)
 
 
-def default_print(json_obj, print_failures: bool=False):
+def default_print(json_obj, print_failures=False):
+    # type: (Dict[Any, Any], bool) -> Any
     for func in json_obj:
         indent = 40
         width = 80
@@ -122,29 +145,29 @@ def default_print(json_obj, print_failures: bool=False):
 
         print("\n" + " "*(indent-3) + "SUCCESSES")
 
-        print("─"*indent + "┬" + "─"*(width-indent-1))
-        print(" "*((indent//2)-2) + "type" + " "*((indent//2)-2) + "│" + "   " + "instance")
-        print("─"*indent + "┼" + "─" * (width - indent - 1))
+        print("-"*indent + "|" + "-"*(width-indent-1))
+        print(" "*((indent//2)-2) + "type" + " "*((indent//2)-2) + "|" + "   " + "instance")
+        print("-"*indent + "+" + "-" * (width - indent - 1))
 
         for types, insts in results["successes"].items():
-            print(types.rjust(indent-1) + " │ ", insts[0])
+            print(types.rjust(indent-1) + " | ", insts[0])
 
         if print_failures:
 
             print("\n\n" + " "*(indent-3) + "FAILURES")
 
-            print("─"*indent + "┬" + "─"*(width-indent-1))
-            print(" "*((indent//2)-2) + "type" + " "*((indent//2)-2) + "│" + "   " + "instance")
-            print("─"*indent + "┼" + "─" * (width - indent - 1))
+            print("-"*indent + "+" + "-"*(width-indent-1))
+            print(" "*((indent//2)-2) + "type" + " "*((indent//2)-2) + "|" + "   " + "instance")
+            print("-"*indent + "+" + "-" * (width - indent - 1))
 
             for types, insts in results["failures"].items():
-                print(types.rjust(indent-1) + " │ ", insts[0])
+                print(types.rjust(indent-1) + " | ", insts[0])
             print_thick_bar(width)
 
 
 def show_results(typeAccum):
     for (typeAnnotation, inst) in typeAccum:
-        print(typeAnnotation + "│", inst)
+        print(typeAnnotation + "|", inst)
 
 
 @main.command("fuzz")
@@ -152,7 +175,8 @@ def show_results(typeAccum):
 @click.argument("function-name")
 @click.option("--print-failures/--no-print-failures", default=False)
 @click.option("--all/--no-all", default=False)
-def fuzz(file_path: str, function_name: str, print_failures: bool, all: bool):
+def fuzz(file_path, function_name, print_failures, all):
+    # type: (str, str, bool, bool) -> None
     """
     TODO
     Args:
@@ -169,11 +193,12 @@ def fuzz(file_path: str, function_name: str, print_failures: bool, all: bool):
     else:  # TODO
         result_json = list()
         result_json.append(run_fuzzer(file_path, function_name))
-        print(result_json)
+       # print(result_json)
         default_print(result_json, print_failures=print_failures)
 
 
-def flat_func_app(func: Callable[..., B], args: List[A]) -> B:
+def flat_func_app(func, args):
+    # type: (Callable[..., B], List[A]) -> B
     """Applys a function to a list of arguments
 
     Args:
@@ -186,10 +211,11 @@ def flat_func_app(func: Callable[..., B], args: List[A]) -> B:
     return func(*args)
 
 
-def class_func_app(class_instance: CLS,
-                   func: Callable[..., B],
-                   func_args: List[A]
-                   ) -> B:
+def class_func_app(class_instance,  # type: CLS
+                   func,  # type: Callable[..., B]
+                   func_args  # type: List[A]
+                   ):
+    # type: (...) -> B
     """
 
     Args:
@@ -204,7 +230,8 @@ def class_func_app(class_instance: CLS,
     return func(*([class_instance] + func_args))
 
 
-def get_function(file_name: str, function_name: str) -> Callable[..., Any]:
+def get_function(file_name, function_name):
+    # type: (str, str) -> Callable[..., Any]
     """Gets the callable function with name function_name
 
     Args:
@@ -222,10 +249,11 @@ def get_function(file_name: str, function_name: str) -> Callable[..., Any]:
         return getattr(getattr(__import__(file_name), funcs[0]), funcs[1])
 
 
-def fuzz_example(file_name: str,
-                 function_name: str,
-                 class_instance: Optional[Any]=None
-                 ) -> Dict[Any, Any]:
+def fuzz_example(file_name,  # type: str
+                 function_name,  # type: str
+                 class_instance=None,  # type: Optional[Any]
+                 ):
+    # type: (...) -> Dict[Any, Any]
     """Type fuzzes a single example
 
     Args:
@@ -276,6 +304,7 @@ def fuzz_example(file_name: str,
                    }
 
     for input_args in all_inputs:
+
         types_only = [x[0] for x in input_args]
         args_only = [x[1] for x in input_args]
 
@@ -293,7 +322,8 @@ def fuzz_example(file_name: str,
     return result_dict
 
 
-def run_fuzzer(file_path: str, function_name: str) -> Dict[Any, Any]:
+def run_fuzzer(file_path, function_name):
+    # type: (str, str) -> Dict[Any, Any]
     path = os.path.split(file_path)
     file_name = path[-1][:-3]
     path_str = os.path.join(*path[:-1])
