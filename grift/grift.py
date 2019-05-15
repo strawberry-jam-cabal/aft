@@ -1,10 +1,10 @@
 """
-GrIFT is fuzzy typing is a python type fuzzer which can be used to type check
+AFT is Fuzzy Typing is a python type fuzzer which can be used to type check
 python modules, files, and single functions.
 """
 from __future__ import print_function
 
-from typing import Any, Callable, Dict, List, Optional, TypeVar
+from typing import Any, Callable, Dict, List, Optional, TypeVar, Union
 import os
 import sys
 from collections import defaultdict
@@ -19,7 +19,6 @@ from instances import *
 from itertools import product, repeat
 
 import click
-
 
 # Set the environment codec variables so that click is callable from python3
 if 'linux' in sys.platform:
@@ -134,7 +133,7 @@ def print_thick_bar(width):
 
 
 def default_print(json_obj, print_failures=False):
-    # type: (Dict[Any, Any], bool) -> Any
+    # type: (Union[List[Any], Dict[Any, Any]], bool) -> Any
     for func in json_obj:
         indent = 40
         width = 80
@@ -193,7 +192,7 @@ def fuzz(file_path, function_name, print_failures, all):
     else:  # TODO
         result_json = list()
         result_json.append(run_fuzzer(file_path, function_name))
-       # print(result_json)
+        # print(result_json)
         default_print(result_json, print_failures=print_failures)
 
 

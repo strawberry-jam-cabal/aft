@@ -29,6 +29,7 @@ def get_bools():
     bools = [True, False]
     return list(map(lambda x: ("bool", x), bools))
 
+
 # todo, random strings & edge case strings (for type refinement)
 def get_strings():
     strings = ["\"a\"", "\"\"",
@@ -36,10 +37,10 @@ def get_strings():
     return list(map(lambda x: ("string", x), strings))
 
 
-def make_identical_lists(x, typeAnnotation):
+def make_identical_lists(x, type_annotation):
     lists = [[x], [x] * 2, [x] * 5, [x] * 50, []]
-    fullType = "[" + typeAnnotation + "]"
-    return list(map(lambda x: (fullType, x), lists))
+    full_type = "[" + type_annotation + "]"
+    return list(map(lambda v: (full_type, v), lists))
 
 
 def get_int_list():
@@ -58,9 +59,10 @@ def get_numpy_arrays():
     arrs = [np.array([1]), np.array([1, 2, 3]), np.array([[1, 2], [3, 4]])]
     return list(map(lambda x: ("np.array", x), arrs))
 
-# tuples, nested lists, mutiple arguments
+# tuples, nested lists, multiple arguments
 
 
 def get_instances():
     return get_ints() + get_floats() + get_bools() \
-           + get_strings() + get_int_list() + get_float_list() + get_string_list() + get_numpy_arrays()
+           + get_strings() + get_int_list() + get_float_list() + \
+           get_string_list() + get_numpy_arrays()
