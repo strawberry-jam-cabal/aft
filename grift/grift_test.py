@@ -85,7 +85,7 @@ class TestGrift(unittest.TestCase):
                               function_name,
                               class_instance=class_instance)
         success_type_list = list(output["results"]["successes"].keys())
-        self.assertListEqual(success_type_list, expected, test_description)
+        self.assertListEqual(sorted(success_type_list), sorted(expected), test_description)
 
     @data(("add_one", ["x"], ["int"], ["def add_one(x: int) -> Any"],
            "Test simple single argument case"),

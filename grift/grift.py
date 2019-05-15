@@ -11,7 +11,7 @@ from collections import defaultdict
 
 if sys.version_info[0] < 3:
     from inspect import getmembers, isclass, isfunction
-    from funcsigs import signature
+    from funcsigs import signature, Parameter
 else:
     from inspect import signature, Parameter, getmembers, isclass, isfunction
 
@@ -193,7 +193,7 @@ def fuzz(file_path, function_name, print_failures, all):
     else:  # TODO
         result_json = list()
         result_json.append(run_fuzzer(file_path, function_name))
-        print(result_json)
+       # print(result_json)
         default_print(result_json, print_failures=print_failures)
 
 
@@ -279,12 +279,8 @@ def fuzz_example(file_name,  # type: str
     total_num_params = len(signature(func).parameters)
 
     # Get the names of the parameters with default arguments
-
-    if sys.version_info[0] < 3:
-        default_param_names = [k for k, v in func_params.items()]
-    else:
-        default_param_names = [k for k, v in func_params.items()
-                               if v.default is not Parameter.empty]
+    default_param_names = [k for k, v in func_params.items()
+                           if v.default is not Parameter.empty]
 
     num_params = total_num_params - len(default_param_names)
 
@@ -308,6 +304,7 @@ def fuzz_example(file_name,  # type: str
                    }
 
     for input_args in all_inputs:
+
         types_only = [x[0] for x in input_args]
         args_only = [x[1] for x in input_args]
 
