@@ -41,13 +41,16 @@ def add_one_only_int_default(a, b=3, c=4):
 
 class Example(object):
 
-    def __init__(self, a: int, b: float, c: str):
+    def __init__(self, a, b, c):
+        # type: (int, float, str)
         self.a = a
         self.b = b
         self.c = c
 
-    def add_some_stuff(self, x: int, y: int) -> str:
-        return f"{self.c} {x + y + self.a + self.b}"
+    def add_some_stuff(self, x, y):
+        # type: (int, int) -> str
+        answer = x + y + self.a + self.b
+        return "{} {}".format(self.c, answer)
 
     def add_one_only_int_no_deps(self, a):
         if type(a) != int:
