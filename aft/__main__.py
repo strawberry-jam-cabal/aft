@@ -1,9 +1,7 @@
-import click
+import argparse
+from typing import Any, Dict, List, Union
 
 from aft import fuzzer
-
-
-from typing import Any, Dict, List, Union
 
 
 def print_thick_bar(width):
@@ -42,36 +40,27 @@ def default_print(json_obj, print_failures=False):
             print_thick_bar(width)
 
 
-@click.group()
 def main():
-    pass
+    parser = argparse.ArgumentParser(prog="aft")
+    parser.add_argument("file_path",
+                        metavar="FILE",
+                        help="Path to the file to fuzz")
+    parser.add_argument("function_name",
+                        metavar="FUNCTION_NAME",
+                        help="Name of the function to fuzz")
+    parser.add_argument("--print-failures",
+                        default=False,
+                        action="store_true",
+                        help="Print failed inputs as well")
+    parser.add_argument("--all",
+                        default=False,
+                        action="store_true",
+                        help="Fuzz everything in the file")
+    args = parser.parse_args()
 
-
-@main.command("fuzz")
-@click.argument("file-path")
-@click.argument("function-name")
-@click.option("--print-failures/--no-print-failures", default=False)
-@click.option("--all/--no-all", default=False)
-def fuzz(file_path, function_name, print_failures, all):
-    # type: (str, str, bool, bool) -> None
-    """
-    TODO
-    Args:
-        file_path:
-        function_name:
-        print_failures:
-        all:
-
-    Returns:
-
-    """
-    if all:
-        pass  # TODO after stub file gen is in
-    else:  # TODO
-        result_json = list()
-        result_json.append(fuzzer.run_fuzzer(file_path, function_name))
-        # print(result_json)
-        default_print(result_json, print_failures=print_failures)
+    result_json = list()
+    result_json.append(fuzzer.run_fuzzer(args.file_path, args.function_name))
+    default_print(result_json, print_failures=args.print_failures)
 
 
 if __name__ == '__main__':
