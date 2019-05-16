@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="aft",
-    version="0.1.0",
+    version="0.1.1",
     author="Annie Cherkaev, Tobin Yehle, and Nic Bertagnolli",
     author_email="strawberry.jam.cabal@gmail.com",
     description="Rabbit Type inference for Python",
