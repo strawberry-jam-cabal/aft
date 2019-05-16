@@ -2,3 +2,4 @@ click
 typing
 funcsigs
 numpy
+ddt

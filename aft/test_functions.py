@@ -38,11 +38,10 @@ def add_one_only_int_default(a, b=3, c=4):
         return a + b + c + 1
 
 
-
 class Example(object):
 
     def __init__(self, a, b, c):
-        # type: (int, float, str)
+        # type: (int, float, str) -> None
         self.a = a
         self.b = b
         self.c = c
