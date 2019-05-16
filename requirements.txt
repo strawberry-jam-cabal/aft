@@ -1,1 +1,3 @@
+numpy
 click
+ddt

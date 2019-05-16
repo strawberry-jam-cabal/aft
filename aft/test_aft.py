@@ -1,15 +1,12 @@
 from __future__ import print_function
 
-import os
-import sys
-sys.path.append(os.getcwd())
 import unittest
-from typing import Any, Dict, List, Optional, Set
+from typing import Any, List, Optional
 
 from ddt import data, ddt, unpack
 
-import grift
-from test_functions import Example
+from aft import aft
+from aft.test_functions import Example
 
 
 @ddt
@@ -28,7 +25,7 @@ class TestGrift(unittest.TestCase):
                           ):
         """Tests that the correct functions are obtained programatically"""
         file_name = "test_functions"
-        func = grift.get_function(file_name, function_name)
+        func = aft.get_function(file_name, function_name)
         result = func(*args)
         self.assertTrue(result == expected, test_description)
 
@@ -47,8 +44,8 @@ class TestGrift(unittest.TestCase):
                             test_description,  # type: str
                             ):
         file_name = "test_functions"
-        func = grift.get_function(file_name, function_name)
-        result = grift.class_func_app(class_instance, func, args)
+        func = aft.get_function(file_name, function_name)
+        result = aft.class_func_app(class_instance, func, args)
         self.assertTrue(result == expected, test_description)
 
     @data(
@@ -81,11 +78,13 @@ class TestGrift(unittest.TestCase):
                                   expected,  # type: List[str]
                                   test_description,  # type: str
                                   ):
-        output = grift.fuzz_example("test_functions",
-                              function_name,
-                              class_instance=class_instance)
+        output = aft.fuzz_example("test_functions",
+                                  function_name,
+                                  class_instance=class_instance)
         success_type_list = list(output["results"]["successes"].keys())
-        self.assertListEqual(sorted(success_type_list), sorted(expected), test_description)
+        self.assertListEqual(sorted(success_type_list),
+                             sorted(expected),
+                             test_description)
 
     @data(("add_one", ["x"], ["int"], ["def add_one(x: int) -> Any"],
            "Test simple single argument case"),
@@ -94,7 +93,7 @@ class TestGrift(unittest.TestCase):
            "Test simple multi argument case"),
           ("add_two", ["x", "y"], ["int, str", "str, int"],
            ["def add_two(x: int, y: str) -> Any",
-            "def add_two(x: str, y: int) -> Any",],
+            "def add_two(x: str, y: int) -> Any"],
            "Test multi argument case multi string")
           )
     @unpack
@@ -110,10 +109,9 @@ class TestGrift(unittest.TestCase):
                          "results": {"successes": {k: [1] for k in arg_types}}
                          }
 
-        function_string = grift.generate_mypy_stub_strings(function_json)
+        function_string = aft.generate_mypy_stub_strings(function_json)
 
-        self.assertListEqual(function_string, expected, test_description)
-
+        self.assertEqual(function_string, expected, test_description)
 
 
 if __name__ == "__main__":

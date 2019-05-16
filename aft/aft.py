@@ -4,21 +4,21 @@ python modules, files, and single functions.
 """
 from __future__ import print_function
 
-from typing import Any, Callable, Dict, List, Optional, TypeVar, Union
 import os
 import sys
 from collections import defaultdict
+from itertools import product, repeat
+from typing import Any, Callable, Dict, List, Optional, TypeVar, Union
+
+import click
+
+from aft.instances import *
 
 if sys.version_info[0] < 3:
     from inspect import getmembers, isclass, isfunction
     from funcsigs import signature, Parameter
 else:
     from inspect import signature, Parameter, getmembers, isclass, isfunction
-
-from instances import *
-from itertools import product, repeat
-
-import click
 
 # Set the environment codec variables so that click is callable from python3
 if 'linux' in sys.platform:
@@ -38,7 +38,6 @@ CLS = TypeVar("CLS")
 @click.group()
 def main():
     pass
-
 
     """
 JSON SPEC
