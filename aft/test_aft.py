@@ -10,7 +10,7 @@ from aft.test_functions import Example
 
 
 @ddt
-class TestGrift(unittest.TestCase):
+class TestAft(unittest.TestCase):
 
     @data(("add_one", [1], 2, "Test getting a single function"),
           ("Example.add_some_stuff", [Example(1, 2, "sum is:"), 1, 2],
