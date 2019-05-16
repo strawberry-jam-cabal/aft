@@ -40,7 +40,7 @@ def default_print(json_obj, print_failures=False):
             print_thick_bar(width)
 
 
-def main():
+def console_entry():
     parser = argparse.ArgumentParser(prog="aft")
     parser.add_argument("file_path",
                         metavar="FILE",
@@ -64,4 +64,4 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    console_entry()
