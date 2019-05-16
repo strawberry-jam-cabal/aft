@@ -70,7 +70,7 @@ def get_all_functions_in_module(module_name, module_str):
     potential_classes = [(name, obj) for name, obj in getmembers(module_name) if
                          isclass(obj) and obj.__module__ == module_str]
 
-    # TODO:: INheritance fucks us
+    # TODO:: Inheritance fucks us
     all_classes = [(name, obj, getmembers(obj, predicate=isfunction))
                    for name, obj in potential_classes]
 
