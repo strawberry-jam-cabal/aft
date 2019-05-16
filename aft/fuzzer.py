@@ -8,9 +8,7 @@ import os
 import sys
 from collections import defaultdict
 from itertools import product, repeat
-from typing import Any, Callable, Dict, List, Optional, TypeVar, Union
-
-import click
+from typing import Any, Callable, Dict, List, Optional, TypeVar
 
 from aft.instances import *
 
@@ -35,11 +33,7 @@ B = TypeVar("B")
 CLS = TypeVar("CLS")
 
 
-@click.group()
-def main():
-    pass
-
-    """
+"""
 JSON SPEC
 
     [
@@ -60,7 +54,7 @@ JSON SPEC
                     }
             }
     ]
-    """
+"""
 
 
 def get_all_functions_in_module(module_name, module_str):
@@ -122,78 +116,6 @@ def generate_mypy_stub_strings(function_example_dict):
 #             to_write.append(", ")
 #         to_write[:-2].append(") -> Any")
 #     print()
-
-
-def print_thin_bar(width):
-    print("-" * width)
-
-
-def print_thick_bar(width):
-    print("-" * width)
-
-
-def default_print(json_obj, print_failures=False):
-    # type: (Union[List[Any], Dict[Any, Any]], bool) -> Any
-    for func in json_obj:
-        indent = 40
-        width = 80
-        print_thick_bar(width)
-
-        print(" "*(indent-2) + "TESTED\n" + str(func["function_to_type"]))
-        results = func["results"]
-
-        print("\n" + " "*(indent-3) + "SUCCESSES")
-
-        print("-"*indent + "|" + "-"*(width-indent-1))
-        print(" "*((indent//2)-2) + "type" + " "*((indent//2)-2) + "|" + "   " + "instance")
-        print("-"*indent + "+" + "-" * (width - indent - 1))
-
-        for types, insts in results["successes"].items():
-            print(types.rjust(indent-1) + " | ", insts[0])
-
-        if print_failures:
-
-            print("\n\n" + " "*(indent-3) + "FAILURES")
-
-            print("-"*indent + "+" + "-"*(width-indent-1))
-            print(" "*((indent//2)-2) + "type" + " "*((indent//2)-2) + "|" + "   " + "instance")
-            print("-"*indent + "+" + "-" * (width - indent - 1))
-
-            for types, insts in results["failures"].items():
-                print(types.rjust(indent-1) + " | ", insts[0])
-            print_thick_bar(width)
-
-
-def show_results(typeAccum):
-    for (typeAnnotation, inst) in typeAccum:
-        print(typeAnnotation + "|", inst)
-
-
-@main.command("fuzz")
-@click.argument("file-path")
-@click.argument("function-name")
-@click.option("--print-failures/--no-print-failures", default=False)
-@click.option("--all/--no-all", default=False)
-def fuzz(file_path, function_name, print_failures, all):
-    # type: (str, str, bool, bool) -> None
-    """
-    TODO
-    Args:
-        file_path:
-        function_name:
-        print_failures:
-        all:
-
-    Returns:
-
-    """
-    if all:
-        pass  # TODO after stub file gen is in
-    else:  # TODO
-        result_json = list()
-        result_json.append(run_fuzzer(file_path, function_name))
-        # print(result_json)
-        default_print(result_json, print_failures=print_failures)
 
 
 def flat_func_app(func, args):
@@ -358,7 +280,3 @@ def run_fuzzer(file_path, function_name):
     else:
         raise ValueError("{} must either be the name of a function or a"
                          "[single nested] class method".format(function_name))
-
-
-if __name__ == "__main__":
-    main()
