@@ -3,7 +3,7 @@ This file holds instances of defined fuzz generators.  These methods are used
 to fuzz the python code.
 """
 
-import numpy as np
+import random
 
 # todo iterative generation
 
@@ -15,13 +15,13 @@ def get_dummy():
 def get_ints():
     # todo control how many you want to try
     ints = [1, 0, -1]
-    ints += np.random.randint(-1000, 1000, 10).tolist()
+    ints += [random.randint(-1000, 1000) for _ in range(10)]
     return list(map(lambda x: ("int", x), ints))
 
 
 def get_floats():
     floats = [-1.5, 0.0, 1.3]
-    floats += (np.random.rand(10) * 100).tolist()
+    floats += [random.random() * 100 for _ in range(10)]
     return list(map(lambda x: ("float", x), floats))
 
 
@@ -56,8 +56,12 @@ def get_string_list():
 
 
 def get_numpy_arrays():
-    arrs = [np.array([1]), np.array([1, 2, 3]), np.array([[1, 2], [3, 4]])]
-    return list(map(lambda x: ("np.array", x), arrs))
+    try:
+        import numpy as np
+        arrs = [np.array([1]), np.array([1, 2, 3]), np.array([[1, 2], [3, 4]])]
+        return list(map(lambda x: ("np.array", x), arrs))
+    except ImportError:
+        return []
 
 # tuples, nested lists, multiple arguments
 
