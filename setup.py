@@ -13,6 +13,7 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     url="https://github.com/strawberry-jam-cabal/aft",
     packages=["aft"],
+    install_requires=["typing", "funcsigs"],
     entry_points={"console_scripts": ["aft=aft.__main__:console_entry"]},
     classifiers=[
         "Programming Language :: Python :: 3",
