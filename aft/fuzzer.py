@@ -8,9 +8,7 @@ import os
 import sys
 from collections import defaultdict
 from itertools import product, repeat
-from typing import Any, Callable, Dict, List, Optional, TypeVar, Union
-
-import click
+from typing import Any, Callable, Dict, List, Optional, TypeVar
 
 from aft.instances import *
 
@@ -35,11 +33,7 @@ B = TypeVar("B")
 CLS = TypeVar("CLS")
 
 
-@click.group()
-def main():
-    pass
-
-    """
+"""
 JSON SPEC
 
     [
@@ -60,17 +54,17 @@ JSON SPEC
                     }
             }
     ]
-    """
+"""
 
 
 def get_all_functions_in_module(module_name, module_str):
     # type: (Any, str) -> Any
     """Gets all classes and sub methods from a module
     """
-    potential_classes = [(name, obj) for name, obj in getmembers(module_name) if
-                         isclass(obj) and obj.__module__ == module_str]
+    potential_classes = [(name, obj) for name, obj in getmembers(module_name)
+                         if isclass(obj) and obj.__module__ == module_str]
 
-    # TODO:: INheritance fucks us
+    # TODO:: Inheritance fucks us
     all_classes = [(name, obj, getmembers(obj, predicate=isfunction))
                    for name, obj in potential_classes]
 
@@ -107,92 +101,21 @@ def generate_mypy_stub_strings(function_example_dict):
     return stub_strings
 
 
-def generate_mypy_stub_file(json_types):
-    # type: (Dict[str, Any]) -> None
-    to_write = []
-    for func in json_types:
-        to_write.append("def ")
-        to_write.append(function["function_to_type"])
-        to_write.append("(")
-        for arg_name, arg_type in zip(function["arg_names"], function["results"]["successes"]):
-            to_write.append(arg_name)
-            to_write.append(": ")
-            to_write.append(arg_type)
-            to_write.append(", ")
-        to_write[:-2].append(") -> Any")
-    print()
-
-
-def print_thin_bar(width):
-    print("-" * width)
-
-
-def print_thick_bar(width):
-    print("-" * width)
-
-
-def default_print(json_obj, print_failures=False):
-    # type: (Union[List[Any], Dict[Any, Any]], bool) -> Any
-    for func in json_obj:
-        indent = 40
-        width = 80
-        print_thick_bar(width)
-
-        print(" "*(indent-2) + "TESTED\n" + str(func["function_to_type"]))
-        results = func["results"]
-
-        print("\n" + " "*(indent-3) + "SUCCESSES")
-
-        print("-"*indent + "|" + "-"*(width-indent-1))
-        print(" "*((indent//2)-2) + "type" + " "*((indent//2)-2) + "|" + "   " + "instance")
-        print("-"*indent + "+" + "-" * (width - indent - 1))
-
-        for types, insts in results["successes"].items():
-            print(types.rjust(indent-1) + " | ", insts[0])
-
-        if print_failures:
-
-            print("\n\n" + " "*(indent-3) + "FAILURES")
-
-            print("-"*indent + "+" + "-"*(width-indent-1))
-            print(" "*((indent//2)-2) + "type" + " "*((indent//2)-2) + "|" + "   " + "instance")
-            print("-"*indent + "+" + "-" * (width - indent - 1))
-
-            for types, insts in results["failures"].items():
-                print(types.rjust(indent-1) + " | ", insts[0])
-            print_thick_bar(width)
-
-
-def show_results(typeAccum):
-    for (typeAnnotation, inst) in typeAccum:
-        print(typeAnnotation + "|", inst)
-
-
-@main.command("fuzz")
-@click.argument("file-path")
-@click.argument("function-name")
-@click.option("--print-failures/--no-print-failures", default=False)
-@click.option("--all/--no-all", default=False)
-def fuzz(file_path, function_name, print_failures, all):
-    # type: (str, str, bool, bool) -> None
-    """
-    TODO
-    Args:
-        file_path:
-        function_name:
-        print_failures:
-        all:
-
-    Returns:
-
-    """
-    if all:
-        pass  # TODO after stub file gen is in
-    else:  # TODO
-        result_json = list()
-        result_json.append(run_fuzzer(file_path, function_name))
-        # print(result_json)
-        default_print(result_json, print_failures=print_failures)
+# def generate_mypy_stub_file(json_types):
+#     # type: (Dict[str, Any]) -> None
+#     to_write = []
+#     for func in json_types:
+#         to_write.append("def ")
+#         to_write.append(func["function_to_type"])
+#         to_write.append("(")
+#         for arg_name, arg_type in zip(func["arg_names"],
+#                                       func["results"]["successes"]):
+#             to_write.append(arg_name)
+#             to_write.append(": ")
+#             to_write.append(arg_type)
+#             to_write.append(", ")
+#         to_write[:-2].append(") -> Any")
+#     print()
 
 
 def flat_func_app(func, args):
@@ -211,7 +134,7 @@ def flat_func_app(func, args):
 
 def class_func_app(class_instance,  # type: CLS
                    func,  # type: Callable[..., B]
-                   func_args  # type: List[A]
+                   func_args  # type: List[Any]
                    ):
     # type: (...) -> B
     """
@@ -255,7 +178,8 @@ def fuzz_example(file_name,  # type: str
     """Type fuzzes a single example
 
     Args:
-        file_name: The file name where the function we'd like to fuzz is located
+        file_name: The file name where the function we'd like to fuzz is
+            located
         function_name: The name of the function we'd like to fuzz
         class_instance: The instance of the class this function is a member of
             if any.
@@ -294,12 +218,12 @@ def fuzz_example(file_name,  # type: str
     # instances = get_dummy()
     all_inputs = list(product(*repeat(instances, num_params)))
 
-    result_dict = {"function_to_type": function_name,
-                   "arg_names": param_names,
-                   "results": {"successes": defaultdict(list),
-                               "failures": defaultdict(list)
-                               }
-                   }
+    result_dict = {
+        "function_to_type": function_name,
+        "arg_names": param_names,
+        "results": {"successes": defaultdict(list),
+                    "failures": defaultdict(list)}
+    }  # type: Dict[str, Any]
 
     for input_args in all_inputs:
 
@@ -314,7 +238,7 @@ def fuzz_example(file_name,  # type: str
                 class_func_app(class_instance, func, args_only)
                 result_dict['results']['successes'][str(types_only)[1:-1]].append(args_only)
 
-        except Exception as e:
+        except Exception:
             result_dict['results']['failures'][str(types_only)[1:-1]].append(args_only)
 
     return result_dict
@@ -354,9 +278,5 @@ def run_fuzzer(file_path, function_name):
     elif len(funcs) == 1:
         return fuzz_example(file_name, function_name)
     else:
-        raise ValueError("{} must either be the name of a function or a [single nested] class "
-                         "method".format(function_name))
-
-
-if __name__ == "__main__":
-    main()
+        raise ValueError("{} must either be the name of a function or a"
+                         "[single nested] class method".format(function_name))

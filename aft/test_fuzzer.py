@@ -5,12 +5,12 @@ from typing import Any, List, Optional
 
 from ddt import data, ddt, unpack
 
-from aft import aft
+from aft import fuzzer
 from aft.test_functions import Example
 
 
 @ddt
-class TestGrift(unittest.TestCase):
+class TestFuzzer(unittest.TestCase):
 
     @data(("add_one", [1], 2, "Test getting a single function"),
           ("Example.add_some_stuff", [Example(1, 2, "sum is:"), 1, 2],
@@ -25,7 +25,7 @@ class TestGrift(unittest.TestCase):
                           ):
         """Tests that the correct functions are obtained programatically"""
         file_name = "test_functions"
-        func = aft.get_function(file_name, function_name)
+        func = fuzzer.get_function(file_name, function_name)
         result = func(*args)
         self.assertTrue(result == expected, test_description)
 
@@ -44,8 +44,8 @@ class TestGrift(unittest.TestCase):
                             test_description,  # type: str
                             ):
         file_name = "test_functions"
-        func = aft.get_function(file_name, function_name)
-        result = aft.class_func_app(class_instance, func, args)
+        func = fuzzer.get_function(file_name, function_name)
+        result = fuzzer.class_func_app(class_instance, func, args)
         self.assertTrue(result == expected, test_description)
 
     @data(
@@ -78,9 +78,9 @@ class TestGrift(unittest.TestCase):
                                   expected,  # type: List[str]
                                   test_description,  # type: str
                                   ):
-        output = aft.fuzz_example("test_functions",
-                                  function_name,
-                                  class_instance=class_instance)
+        output = fuzzer.fuzz_example("test_functions",
+                                     function_name,
+                                     class_instance=class_instance)
         success_type_list = list(output["results"]["successes"].keys())
         self.assertListEqual(sorted(success_type_list),
                              sorted(expected),
@@ -109,7 +109,7 @@ class TestGrift(unittest.TestCase):
                          "results": {"successes": {k: [1] for k in arg_types}}
                          }
 
-        function_string = aft.generate_mypy_stub_strings(function_json)
+        function_string = fuzzer.generate_mypy_stub_strings(function_json)
 
         self.assertEqual(function_string, expected, test_description)
 

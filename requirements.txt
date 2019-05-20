@@ -1,5 +1,4 @@
-click
 typing
 funcsigs
-numpy
 ddt
+wheel
