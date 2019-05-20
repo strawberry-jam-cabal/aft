@@ -6,7 +6,7 @@ from typing import Any, List, Optional
 from ddt import data, ddt, unpack
 
 from aft import fuzzer
-from aft.test_functions import Example
+from test_functions import Example
 
 
 @ddt
