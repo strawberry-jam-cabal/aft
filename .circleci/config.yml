@@ -16,13 +16,16 @@ jobs:
           name: run tests
           command: |
             mkdir -p test-reports
-            pytest --junit-xml=test-reports/junit.xml test
+            pytest --junit-xml=test-reports/junit.xml --cov=aft --cov-report=html test
 
       - store_test_results:
           path: test-reports
 
       - store_artifacts:
           path: test-reports
+
+      - store_artifacts:
+          path: htmlcov
 
 # Orchestrate or schedule a set of jobs, see https://circleci.com/docs/2.0/workflows/
 workflows:
