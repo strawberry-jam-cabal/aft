@@ -151,23 +151,27 @@ def class_func_app(class_instance,  # type: CLS
     return func(*([class_instance] + func_args))
 
 
-def get_function(file_name, function_name):
+def get_function(module_name, function_name):
     # type: (str, str) -> Callable[..., Any]
     """Gets the callable function with name function_name
 
     Args:
-        file_name: The file where our function is defined
+        module_name: The module where our function is defined
         function_name: The name of the function we'd like to load
             programatically
 
     Returns:
         The callable function.
     """
-    funcs = function_name.split(".")
-    if len(funcs) == 1:
-        return getattr(__import__(file_name), funcs[0])
-    else:
-        return getattr(getattr(__import__(file_name), funcs[0]), funcs[1])
+    # This is the fully qualified name of the function eg: pack.mod.Cls.func
+    func_path = module_name.split(".") + function_name.split(".")
+
+    reference = __import__(module_name)
+    # drill down into submodules and/or a class
+    for name in func_path[1:]:
+        reference = getattr(reference, name)
+
+    return reference
 
 
 def fuzz_example(file_name,  # type: str
