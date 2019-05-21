@@ -6,7 +6,7 @@ from typing import Any, List, Optional
 from ddt import data, ddt, unpack
 
 from aft import fuzzer
-from aft.test_functions import Example
+from test.test_functions import Example
 
 
 @ddt
@@ -24,7 +24,7 @@ class TestFuzzer(unittest.TestCase):
                           test_description,   # type:  str
                           ):
         """Tests that the correct functions are obtained programatically"""
-        file_name = "test_functions"
+        file_name = "test.test_functions"
         func = fuzzer.get_function(file_name, function_name)
         result = func(*args)
         self.assertTrue(result == expected, test_description)
@@ -43,7 +43,7 @@ class TestFuzzer(unittest.TestCase):
                             expected,  # type: Any
                             test_description,  # type: str
                             ):
-        file_name = "test_functions"
+        file_name = "test.test_functions"
         func = fuzzer.get_function(file_name, function_name)
         result = fuzzer.class_func_app(class_instance, func, args)
         self.assertTrue(result == expected, test_description)
@@ -78,7 +78,7 @@ class TestFuzzer(unittest.TestCase):
                                   expected,  # type: List[str]
                                   test_description,  # type: str
                                   ):
-        output = fuzzer.fuzz_example("test_functions",
+        output = fuzzer.fuzz_example("test.test_functions",
                                      function_name,
                                      class_instance=class_instance)
         success_type_list = list(output["results"]["successes"].keys())
