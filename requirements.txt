@@ -1,4 +1,6 @@
 typing
 funcsigs
+pytest
+pytest-cov
 ddt
 wheel
