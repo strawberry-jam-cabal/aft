@@ -4,7 +4,7 @@ version: 2.1
 jobs:
   test:
     docker:
-      image: circleci/python:3.7
+      - image: circleci/python:3.7
     steps:
       - checkout
       - run: sudo pip3 install -r requirements.txt
