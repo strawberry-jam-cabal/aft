@@ -7,8 +7,22 @@ jobs:
       - image: circleci/python:3.7
     steps:
       - checkout
-      - run: sudo pip3 install -r requirements.txt
-      - run: python3 -m unittest discover
+
+      - run:
+          name: install
+          command: sudo pip3 install -r requirements.txt
+
+      - run:
+          name: run tests
+          command: |
+            mkdir -p test-reports
+            pytest --junit-xml=test-reports/junit.xml test
+
+      - store_test_results:
+          path: test-reports
+
+      - store_artifacts:
+          path: test-reports
 
 # Orchestrate or schedule a set of jobs, see https://circleci.com/docs/2.0/workflows/
 workflows:

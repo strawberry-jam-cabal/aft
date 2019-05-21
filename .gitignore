@@ -11,3 +11,6 @@ venv/
 build/
 dist/
 aft.egg-info/
+
+# Test output
+test-reports/
