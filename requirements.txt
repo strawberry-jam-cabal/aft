@@ -3,4 +3,5 @@ funcsigs
 pytest
 pytest-cov
 ddt
+coveralls
 wheel
