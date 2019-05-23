@@ -17,6 +17,7 @@ jobs:
           command: |
             mkdir -p test-reports
             pytest --junit-xml=test-reports/junit.xml --cov=aft --cov-report=html test
+            coveralls
 
       - store_test_results:
           path: test-reports
