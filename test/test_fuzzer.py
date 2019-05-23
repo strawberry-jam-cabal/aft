@@ -59,7 +59,7 @@ class TestFuzzer(unittest.TestCase):
            "Test single input function with multi types"),
           ("add_two_multi_type", None, ["'int', 'int'", "'int', 'float'",
                                         "'float', 'int'", "'float', 'float'",
-                                        "'string', 'string'"],
+                                        "'str', 'str'"],
            "Test multi input function with multi types"),
           ("Example.add_one_only_int_no_deps", Example(1, 2.0, "3"), ["'int'"],
            "Test method in class with no dependencies and single type"),
@@ -69,7 +69,7 @@ class TestFuzzer(unittest.TestCase):
            "Test method in class with multi types and dependencies"),
           ("Example.add_two_multi_type", Example(1, 2.0, "3"),
            [],
-           "Test method in class with dependencies no feasable types"),
+           "Test method in class with dependencies no feasible types"),
           ("add_one_only_int_default", None, ["'int'"],
            "test default parameters")
           )
