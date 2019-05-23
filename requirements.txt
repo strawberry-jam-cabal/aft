@@ -1,5 +1,6 @@
 typing
 funcsigs
+flake8
 pytest
 pytest-cov
 ddt
