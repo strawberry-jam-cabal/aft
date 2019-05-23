@@ -32,8 +32,8 @@ def get_bools():
 
 # todo, random strings & edge case strings (for type refinement)
 def get_strings():
-    strings = ["\"a\"", "\"\"",
-               "\"life is rolling on, and it's all very exciting\""]
+    strings = ["a", "", "빵", "الكلب", "🦝",
+               "\"Life is rolling on, and it's all very exciting\""]
     return list(map(lambda x: ("string", x), strings))
 
 
