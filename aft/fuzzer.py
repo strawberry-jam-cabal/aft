@@ -10,7 +10,7 @@ from collections import defaultdict
 from itertools import product, repeat
 from typing import Any, Callable, Dict, List, Optional, TypeVar
 
-from aft.instances import *
+import aft.instances
 
 if sys.version_info[0] < 3:
     from inspect import getmembers, isclass, isfunction
@@ -152,7 +152,7 @@ def class_func_app(class_instance,  # type: CLS
 
 
 def get_function(module_name, function_name):
-    # type: (str, str) -> Callable[..., Any]
+    # type: (str, str) -> Any
     """Gets the callable function with name function_name
 
     Args:
@@ -217,7 +217,7 @@ def fuzz_example(file_name,  # type: str
 
     # annotations = func.__annotations__
 
-    instances = get_instances()
+    instances = aft.instances.get_instances()
 
     # instances = get_dummy()
     all_inputs = list(product(*repeat(instances, num_params)))

@@ -23,6 +23,7 @@ class TestFuzzer(unittest.TestCase):
                           expected,  # type: Any
                           test_description,   # type:  str
                           ):
+        # type: (...) -> None
         """Tests that the correct functions are obtained programatically"""
         file_name = "test.test_functions"
         func = fuzzer.get_function(file_name, function_name)
@@ -43,6 +44,7 @@ class TestFuzzer(unittest.TestCase):
                             expected,  # type: Any
                             test_description,  # type: str
                             ):
+        # type: (...) -> None
         file_name = "test.test_functions"
         func = fuzzer.get_function(file_name, function_name)
         result = fuzzer.class_func_app(class_instance, func, args)
@@ -78,6 +80,7 @@ class TestFuzzer(unittest.TestCase):
                                   expected,  # type: List[str]
                                   test_description,  # type: str
                                   ):
+        # type: (...) -> None
         output = fuzzer.fuzz_example("test.test_functions",
                                      function_name,
                                      class_instance=class_instance)
@@ -104,6 +107,7 @@ class TestFuzzer(unittest.TestCase):
                                        expected,  # type: str
                                        test_description,  # type: str
                                        ):
+        # type: (...) -> None
         function_json = {"function_to_type": function_name,
                          "arg_names": arg_names,
                          "results": {"successes": {k: [1] for k in arg_types}}
