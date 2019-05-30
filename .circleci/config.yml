@@ -15,8 +15,9 @@ jobs:
       - run:
           name: run tests
           command: |
-            flake8 aft test
+            mypy aft test
             pytest --junit-xml=test-reports/junit.xml --cov=aft --cov-report=html test
+            flake8 aft test
             coveralls
 
       - store_test_results:

@@ -152,7 +152,7 @@ def class_func_app(class_instance,  # type: CLS
 
 
 def get_function(module_name, function_name):
-    # type: (str, str) -> Callable[..., Any]
+    # type: (str, str) -> Any
     """Gets the callable function with name function_name
 
     Args:
