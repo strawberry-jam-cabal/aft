@@ -15,7 +15,7 @@ jobs:
       - run:
           name: run tests
           command: |
-            mkdir -p test-reports
+            flake8 aft test
             pytest --junit-xml=test-reports/junit.xml --cov=aft --cov-report=html test
 
       - store_test_results:
