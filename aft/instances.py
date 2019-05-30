@@ -42,7 +42,7 @@ def get_strings():
     # type: () -> Example
     strings = ["a", "", "빵", "الكلب", "🦝",
                "\"Life is rolling on, and it's all very exciting\""]
-    return list(map(lambda x: ("string", x), strings))
+    return list(map(lambda x: ("str", x), strings))
 
 
 def make_identical_lists(x, type_annotation):
