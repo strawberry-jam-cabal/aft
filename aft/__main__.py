@@ -22,7 +22,8 @@ def default_print(json_obj, print_failures=False):
         print("\n" + " "*(indent-3) + "SUCCESSES")
 
         print("-"*indent + "|" + "-"*(width-indent-1))
-        print(" "*((indent//2)-2) + "type" + " "*((indent//2)-2) + "|" + "   " + "instance")
+        print(" "*((indent//2)-2) + "type" + " "*((indent//2)-2) +
+              "|" + "   " + "instance")
         print("-"*indent + "+" + "-" * (width - indent - 1))
 
         for types, insts in results["successes"].items():
@@ -33,7 +34,8 @@ def default_print(json_obj, print_failures=False):
             print("\n\n" + " "*(indent-3) + "FAILURES")
 
             print("-"*indent + "+" + "-"*(width-indent-1))
-            print(" "*((indent//2)-2) + "type" + " "*((indent//2)-2) + "|" + "   " + "instance")
+            print(" "*((indent//2)-2) + "type" + " "*((indent//2)-2) +
+                  "|" + "   " + "instance")
             print("-"*indent + "+" + "-" * (width - indent - 1))
 
             for types, insts in results["failures"].items():

@@ -61,4 +61,3 @@ class Example(object):
             raise TypeError()
         else:
             return self.c + a + b + self.a + self.b
-

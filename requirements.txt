@@ -1,7 +1,9 @@
 typing
 funcsigs
 mypy
+flake8
 pytest
 pytest-cov
 ddt
+coveralls
 wheel

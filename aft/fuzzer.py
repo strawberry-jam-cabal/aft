@@ -237,13 +237,15 @@ def fuzz_example(file_name,  # type: str
         try:
             if class_instance is None:
                 flat_func_app(func, args_only)
-                result_dict['results']['successes'][str(types_only)[1:-1]].append(args_only)
             else:
                 class_func_app(class_instance, func, args_only)
-                result_dict['results']['successes'][str(types_only)[1:-1]].append(args_only)
+
+            successes = result_dict['results']['successes']
+            successes[str(types_only)[1:-1]].append(args_only)
 
         except Exception:
-            result_dict['results']['failures'][str(types_only)[1:-1]].append(args_only)
+            failures = result_dict['results']['failures']
+            failures[str(types_only)[1:-1]].append(args_only)
 
     return result_dict
 
@@ -265,16 +267,16 @@ def run_fuzzer(file_path, function_name):
         constructor_name = funcs[0]
 
         # Fuzz the class constructor so we can instantiate it
-        valid_constructor_calls_json = fuzz_example(file_name, constructor_name)
+        constr_results = fuzz_example(file_name, constructor_name)
 
         # Get valid constructor types and args
-        good_constr_args = list(valid_constructor_calls_json["results"]["successes"].values())
+        constr_args = list(constr_results["results"]["successes"].values())
 
         # TODO: run over all (?) successful class instances
 
         # Instantiate the class
         class_constr = get_function(file_name, constructor_name)
-        class_instance = class_constr(*(good_constr_args[0][0]))
+        class_instance = class_constr(*(constr_args[0][0]))
 
         # Fuzz the function using single instance of the class
         return fuzz_example(file_name, function_name, class_instance)
