@@ -5,6 +5,7 @@ from aft import fuzzer
 
 
 def print_thick_bar(width):
+    # type: (int) -> None
     print("-" * width)
 
 
@@ -55,6 +56,7 @@ def default_print(json_obj, print_failures=False):
 
 
 def console_entry():
+    # type: () -> None
     parser = argparse.ArgumentParser(prog="aft")
     parser.add_argument("file_path", metavar="FILE", help="Path to the file to fuzz")
     parser.add_argument(

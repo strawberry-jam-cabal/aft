@@ -5,10 +5,15 @@ __pycache__/*
 .mypy_cache/
 venv/
 env/
-
+.cache/
 .idea/
 
 # Build artifacts
 build/
 dist/
 aft.egg-info/
+
+# Test output
+test-reports/
+.coverage
+htmlcov/

@@ -45,7 +45,6 @@ class Example(object):
         self.c = c
 
     def add_some_stuff(self, x, y):
-        # type: (int, int) -> str
         answer = x + y + self.a + self.b
         return "{} {}".format(self.c, answer)
 
