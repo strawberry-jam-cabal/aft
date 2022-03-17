@@ -3,3 +3,8 @@ funcsigs
 ddt
 wheel
 pytest
+
+# tooling
+isort
+docformatter
+black

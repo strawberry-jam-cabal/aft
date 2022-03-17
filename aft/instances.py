@@ -1,6 +1,6 @@
-"""
-This file holds instances of defined fuzz generators.  These methods are used
-to fuzz the python code.
+"""This file holds instances of defined fuzz generators.
+
+These methods are used to fuzz the python code.
 """
 
 import random
@@ -32,8 +32,7 @@ def get_bools():
 
 # todo, random strings & edge case strings (for type refinement)
 def get_strings():
-    strings = ["\"a\"", "\"\"",
-               "\"life is rolling on, and it's all very exciting\""]
+    strings = ['"a"', '""', '"life is rolling on, and it\'s all very exciting"']
     return list(map(lambda x: ("string", x), strings))
 
 
@@ -58,15 +57,24 @@ def get_string_list():
 def get_numpy_arrays():
     try:
         import numpy as np
+
         arrs = [np.array([1]), np.array([1, 2, 3]), np.array([[1, 2], [3, 4]])]
         return list(map(lambda x: ("np.array", x), arrs))
     except ImportError:
         return []
 
+
 # tuples, nested lists, multiple arguments
 
 
 def get_instances():
-    return get_ints() + get_floats() + get_bools() \
-           + get_strings() + get_int_list() + get_float_list() + \
-           get_string_list() + get_numpy_arrays()
+    return (
+        get_ints()
+        + get_floats()
+        + get_bools()
+        + get_strings()
+        + get_int_list()
+        + get_float_list()
+        + get_string_list()
+        + get_numpy_arrays()
+    )

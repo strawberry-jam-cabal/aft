@@ -1,7 +1,5 @@
-"""
-AFT is Fuzzy Typing is a python type fuzzer which can be used to type check
-python modules, files, and single functions.
-"""
+"""AFT is Fuzzy Typing is a python type fuzzer which can be used to type check
+python modules, files, and single functions."""
 from __future__ import print_function
 
 import os
@@ -14,17 +12,18 @@ from aft.instances import *
 
 if sys.version_info[0] < 3:
     from inspect import getmembers, isclass, isfunction
-    from funcsigs import signature, Parameter
+
+    from funcsigs import Parameter, signature
 else:
-    from inspect import signature, Parameter, getmembers, isclass, isfunction
+    from inspect import Parameter, getmembers, isclass, isfunction, signature
 
 # Set the environment codec variables so that click is callable from python3
-if 'linux' in sys.platform:
-    os.environ['LC_AL'] = "C.UTF-8"
-    os.environ['LANG'] = "C.UTF-8"
+if "linux" in sys.platform:
+    os.environ["LC_AL"] = "C.UTF-8"
+    os.environ["LANG"] = "C.UTF-8"
 else:
-    os.environ['LC_AL'] = "en_US.utf-8"
-    os.environ['LANG'] = "en_US.utf-8"
+    os.environ["LC_AL"] = "en_US.utf-8"
+    os.environ["LANG"] = "en_US.utf-8"
 
 
 # Define generic type variables
@@ -59,14 +58,18 @@ JSON SPEC
 
 def get_all_functions_in_module(module_name, module_str):
     # type: (Any, str) -> Any
-    """Gets all classes and sub methods from a module
-    """
-    potential_classes = [(name, obj) for name, obj in getmembers(module_name)
-                         if isclass(obj) and obj.__module__ == module_str]
+    """Gets all classes and sub methods from a module."""
+    potential_classes = [
+        (name, obj)
+        for name, obj in getmembers(module_name)
+        if isclass(obj) and obj.__module__ == module_str
+    ]
 
     # TODO:: Inheritance fucks us
-    all_classes = [(name, obj, getmembers(obj, predicate=isfunction))
-                   for name, obj in potential_classes]
+    all_classes = [
+        (name, obj, getmembers(obj, predicate=isfunction))
+        for name, obj in potential_classes
+    ]
 
     return all_classes
 
@@ -82,9 +85,10 @@ def generate_mypy_stub_strings(function_example_dict):
 
     """
     stub_strings = []
-    zipped_types = [zip(function_example_dict["arg_names"], k.split(", ")) for
-                    k, _ in
-                    function_example_dict["results"]["successes"].items()]
+    zipped_types = [
+        zip(function_example_dict["arg_names"], k.split(", "))
+        for k, _ in function_example_dict["results"]["successes"].items()
+    ]
 
     # zipped_types = zip(function_example_dict["arg_names"],
     #                    function_example_dict["results"]["successes"])
@@ -120,7 +124,7 @@ def generate_mypy_stub_strings(function_example_dict):
 
 def flat_func_app(func, args):
     # type: (Callable[..., B], List[A]) -> B
-    """Applys a function to a list of arguments
+    """Applys a function to a list of arguments.
 
     Args:
         func: A function which we want to apply
@@ -132,10 +136,11 @@ def flat_func_app(func, args):
     return func(*args)
 
 
-def class_func_app(class_instance,  # type: CLS
-                   func,  # type: Callable[..., B]
-                   func_args  # type: List[Any]
-                   ):
+def class_func_app(
+    class_instance,  # type: CLS
+    func,  # type: Callable[..., B]
+    func_args,  # type: List[Any]
+):
     # type: (...) -> B
     """
 
@@ -153,7 +158,7 @@ def class_func_app(class_instance,  # type: CLS
 
 def get_function(module_name, function_name):
     # type: (str, str) -> Callable[..., Any]
-    """Gets the callable function with name function_name
+    """Gets the callable function with name function_name.
 
     Args:
         module_name: The module where our function is defined
@@ -174,12 +179,13 @@ def get_function(module_name, function_name):
     return reference
 
 
-def fuzz_example(file_name,  # type: str
-                 function_name,  # type: str
-                 class_instance=None,  # type: Optional[Any]
-                 ):
+def fuzz_example(
+    file_name,  # type: str
+    function_name,  # type: str
+    class_instance=None,  # type: Optional[Any]
+):
     # type: (...) -> Dict[Any, Any]
-    """Type fuzzes a single example
+    """Type fuzzes a single example.
 
     Args:
         file_name: The file name where the function we'd like to fuzz is
@@ -205,8 +211,9 @@ def fuzz_example(file_name,  # type: str
     total_num_params = len(signature(func).parameters)
 
     # Get the names of the parameters with default arguments
-    default_param_names = [k for k, v in func_params.items()
-                           if v.default is not Parameter.empty]
+    default_param_names = [
+        k for k, v in func_params.items() if v.default is not Parameter.empty
+    ]
 
     num_params = total_num_params - len(default_param_names)
 
@@ -225,8 +232,7 @@ def fuzz_example(file_name,  # type: str
     result_dict = {
         "function_to_type": function_name,
         "arg_names": param_names,
-        "results": {"successes": defaultdict(list),
-                    "failures": defaultdict(list)}
+        "results": {"successes": defaultdict(list), "failures": defaultdict(list)},
     }  # type: Dict[str, Any]
 
     for input_args in all_inputs:
@@ -237,13 +243,17 @@ def fuzz_example(file_name,  # type: str
         try:
             if class_instance is None:
                 flat_func_app(func, args_only)
-                result_dict['results']['successes'][str(types_only)[1:-1]].append(args_only)
+                result_dict["results"]["successes"][str(types_only)[1:-1]].append(
+                    args_only
+                )
             else:
                 class_func_app(class_instance, func, args_only)
-                result_dict['results']['successes'][str(types_only)[1:-1]].append(args_only)
+                result_dict["results"]["successes"][str(types_only)[1:-1]].append(
+                    args_only
+                )
 
         except Exception:
-            result_dict['results']['failures'][str(types_only)[1:-1]].append(args_only)
+            result_dict["results"]["failures"][str(types_only)[1:-1]].append(args_only)
 
     return result_dict
 
@@ -268,7 +278,9 @@ def run_fuzzer(file_path, function_name):
         valid_constructor_calls_json = fuzz_example(file_name, constructor_name)
 
         # Get valid constructor types and args
-        good_constr_args = list(valid_constructor_calls_json["results"]["successes"].values())
+        good_constr_args = list(
+            valid_constructor_calls_json["results"]["successes"].values()
+        )
 
         # TODO: run over all (?) successful class instances
 
@@ -282,5 +294,7 @@ def run_fuzzer(file_path, function_name):
     elif len(funcs) == 1:
         return fuzz_example(file_name, function_name)
     else:
-        raise ValueError("{} must either be the name of a function or a"
-                         "[single nested] class method".format(function_name))
+        raise ValueError(
+            "{} must either be the name of a function or a"
+            "[single nested] class method".format(function_name)
+        )
