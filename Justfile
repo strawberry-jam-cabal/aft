@@ -12,6 +12,14 @@ notebook:
 test:
     pytest test
 
+
+check:
+    mypy aft test
+    flake8 --max-line-length=100 aft test
+    just test
+    black --check --diff --color aft test
+
+
 # ~~~~~~~~~~~~~~~~~~ Clean up ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 # formats any python file
@@ -31,5 +39,5 @@ format-tests:
     just format-dir test
 
 format-all:
-    just format-aft 
+    just format-aft
     just format-tests
