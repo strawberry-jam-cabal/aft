@@ -7,3 +7,9 @@ pytest-cov
 ddt
 coveralls
 wheel
+pytest
+
+# tooling
+isort
+docformatter
+black

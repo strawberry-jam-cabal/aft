@@ -1,6 +1,6 @@
-"""
-This file holds instances of defined fuzz generators.  These methods are used
-to fuzz the python code.
+"""This file holds instances of defined fuzz generators.
+
+These methods are used to fuzz the python code.
 """
 
 import random
@@ -71,10 +71,12 @@ def get_numpy_arrays():
     # type: () -> Example
     try:
         import numpy as np
+
         arrs = [np.array([1]), np.array([1, 2, 3]), np.array([[1, 2], [3, 4]])]
         return list(map(lambda x: ("np.array", x), arrs))
     except ImportError:
         return []
+
 
 # tuples, nested lists, multiple arguments
 

@@ -1,21 +1,25 @@
 from __future__ import print_function
 
 import unittest
+from test.test_functions import Example
 from typing import Any, List, Optional
 
 from ddt import data, ddt, unpack
 
 from aft import fuzzer
-from test.test_functions import Example
 
 
 @ddt
 class TestFuzzer(unittest.TestCase):
-
-    @data(("add_one", [1], 2, "Test getting a single function"),
-          ("Example.add_some_stuff", [Example(1, 2, "sum is:"), 1, 2],
-           "sum is: 6", "Test getting a method from a class")
-          )
+    @data(
+        ("add_one", [1], 2, "Test getting a single function"),
+        (
+            "Example.add_some_stuff",
+            [Example(1, 2, "sum is:"), 1, 2],
+            "sum is: 6",
+            "Test getting a method from a class",
+        ),
+    )
     @unpack
     def test_get_function(self,
                           function_name,  # type: str
@@ -31,11 +35,21 @@ class TestFuzzer(unittest.TestCase):
         self.assertTrue(result == expected, test_description)
 
     @data(
-          ("Example.add_some_stuff", Example(1, 2.0, "sum is:"), [1, 2],
-           "sum is: 6.0", "Test applying arguments to a nested function"),
-          ("Example.add_one_only_int_no_deps", Example(1, 2.0, "3"), [1],
-           2, "Test applying arguments to a nested function no dependencies")
-          )
+        (
+            "Example.add_some_stuff",
+            Example(1, 2.0, "sum is:"),
+            [1, 2],
+            "sum is: 6.0",
+            "Test applying arguments to a nested function",
+        ),
+        (
+            "Example.add_one_only_int_no_deps",
+            Example(1, 2.0, "3"),
+            [1],
+            2,
+            "Test applying arguments to a nested function no dependencies",
+        ),
+    )
     @unpack
     def test_class_func_app(self,
                             function_name,  # type:  str
@@ -85,20 +99,36 @@ class TestFuzzer(unittest.TestCase):
                                      function_name,
                                      class_instance=class_instance)
         success_type_list = list(output["results"]["successes"].keys())
-        self.assertListEqual(sorted(success_type_list),
-                             sorted(expected),
-                             test_description)
+        self.assertListEqual(
+            sorted(success_type_list), sorted(expected), test_description
+        )
 
-    @data(("add_one", ["x"], ["int"], ["def add_one(x: int) -> Any"],
-           "Test simple single argument case"),
-          ("add_two", ["x", "y"], ["int, str"],
-           ["def add_two(x: int, y: str) -> Any"],
-           "Test simple multi argument case"),
-          ("add_two", ["x", "y"], ["int, str", "str, int"],
-           ["def add_two(x: int, y: str) -> Any",
-            "def add_two(x: str, y: int) -> Any"],
-           "Test multi argument case multi string")
-          )
+    @data(
+        (
+            "add_one",
+            ["x"],
+            ["int"],
+            ["def add_one(x: int) -> Any"],
+            "Test simple single argument case",
+        ),
+        (
+            "add_two",
+            ["x", "y"],
+            ["int, str"],
+            ["def add_two(x: int, y: str) -> Any"],
+            "Test simple multi argument case",
+        ),
+        (
+            "add_two",
+            ["x", "y"],
+            ["int, str", "str, int"],
+            [
+                "def add_two(x: int, y: str) -> Any",
+                "def add_two(x: str, y: int) -> Any",
+            ],
+            "Test multi argument case multi string",
+        ),
+    )
     @unpack
     def test_generate_mypy_stub_string(self,
                                        function_name,  # type: str

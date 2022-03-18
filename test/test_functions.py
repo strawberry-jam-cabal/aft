@@ -39,7 +39,6 @@ def add_one_only_int_default(a, b=3, c=4):
 
 
 class Example(object):
-
     def __init__(self, a, b, c):
         self.a = a
         self.b = b
