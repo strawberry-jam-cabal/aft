@@ -158,7 +158,7 @@ def class_func_app(
 
 def get_function(module_name, function_name):
     # type: (str, str) -> Any
-    """Gets the callable function with name function_name
+    """Gets the callable function with name function_name.
 
     Args:
         module_name: The module where our function is defined
@@ -246,11 +246,11 @@ def fuzz_example(
             else:
                 class_func_app(class_instance, func, args_only)
 
-            successes = result_dict['results']['successes']
+            successes = result_dict["results"]["successes"]
             successes[str(types_only)[1:-1]].append(args_only)
 
         except Exception:
-            failures = result_dict['results']['failures']
+            failures = result_dict["results"]["failures"]
             failures[str(types_only)[1:-1]].append(args_only)
 
     return result_dict

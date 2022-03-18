@@ -40,8 +40,14 @@ def get_bools():
 # todo, random strings & edge case strings (for type refinement)
 def get_strings():
     # type: () -> Example
-    strings = ["a", "", "빵", "الكلب", "🦝",
-               "\"Life is rolling on, and it's all very exciting\""]
+    strings = [
+        "a",
+        "",
+        "빵",
+        "الكلب",
+        "🦝",
+        '"Life is rolling on, and it\'s all very exciting"',
+    ]
     return list(map(lambda x: ("str", x), strings))
 
 
@@ -83,6 +89,13 @@ def get_numpy_arrays():
 
 def get_instances():
     # type: () -> Example
-    return get_ints() + get_floats() + get_bools() \
-           + get_strings() + get_int_list() + get_float_list() + \
-           get_string_list() + get_numpy_arrays()
+    return (
+        get_ints()
+        + get_floats()
+        + get_bools()
+        + get_strings()
+        + get_int_list()
+        + get_float_list()
+        + get_string_list()
+        + get_numpy_arrays()
+    )
